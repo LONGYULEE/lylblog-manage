@@ -1,131 +1,95 @@
-// import { login, logout, getInfo } from '@/api/user'
-// import { getToken, setToken, removeToken } from '@/utils/auth'
-// import router, { resetRouter } from '@/router'
+import { login, logout, getUserInfo } from '@/api/user'
+import { setToken, removeToken } from '@/utils/auth'
+import http from '@/utils/request'
 
 const state = {
-    //   token: getToken(),
-    //   name: '',
-    //   avatar: '',
-    //   introduction: '',
-    //   roles: []
+    token: '',
+    userId: '',
+    username: '',
+    avatar: '',
 }
 
+//mutations 只能操作同步的数据
+//更改 Vuex 的 store 中的状态的唯一方法是提交 mutation。
+//Vuex 中的 mutation 非常类似于事件：每个 mutation 都有一个字符串的 事件类型 (type,type 相当于mutations中的一个属性) 和 一个 回调函数 (handler)。
+//这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数
 const mutations = {
-    //   SET_TOKEN: (state, token) => {
-    //     state.token = token
-    //   },
-    //   SET_INTRODUCTION: (state, introduction) => {
-    //     state.introduction = introduction
-    //   },
-    //   SET_NAME: (state, name) => {
-    //     state.name = name
-    //   },
-    //   SET_AVATAR: (state, avatar) => {
-    //     state.avatar = avatar
-    //   },
-    //   SET_ROLES: (state, roles) => {
-    //     state.roles = roles
-    //   }
+    //不能直接调用 mutation，调用 SET_TOKEN 时，使用 store.commit('SET_TOKEN');
+    //state: 存储的数据
+    //token: 除了 state 的额外参数，提交方式 store.commit('SET_TOKEN',token);
+    //token: 载荷：大多数情况下，载荷应该是一个对象，这样可以包含多个字段并且记录的 mutation 会更易读
+    SET_TOKEN: (state, token) => {
+        state.token = token;
+    },
+    SET_USERNAME: (state, username) => {
+        state.username = username;
+    },
+    SET_AVATAR: (state, avatar) => {
+        state.avatar = avatar;
+    },
+    SET_ID: (state, userId) => {
+        state.userId = userId;
+    }
 }
 
+//actions 操作异步的数据
 const actions = {
-    //   // user login
-    //   login({ commit }, userInfo) {
-    //     const { username, password } = userInfo
-    //     return new Promise((resolve, reject) => {
-    //       login({ username: username.trim(), password: password }).then(response => {
-    //         const { data } = response
-    //         commit('SET_TOKEN', data.token)
-    //         setToken(data.token)
-    //         resolve()
-    //       }).catch(error => {
-    //         reject(error)
-    //       })
-    //     })
-    //   },
+    //user login
+    login({ commit }, userInfo) {
+        const { uuid, username, password, captcha } = userInfo
+        return new Promise((resolve, reject) => {
+            login(userInfo).then(response => {
+                const { data } = response
+                //token写入vuex
+                commit('SET_TOKEN', data.data)
+                //token写入cookie
+                setToken(data.data)
+                resolve()
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
 
-    //   // get user info
-    //   getInfo({ commit, state }) {
-    //     return new Promise((resolve, reject) => {
-    //       getInfo(state.token).then(response => {
-    //         const { data } = response
+    getInfo({ commit, state }) {
+        return new Promise(resolve => {
+            http.get('/admin/sys/user/info').then(res => {
+                if (res.data.code === 2000) {
+                    let { data } = res.data;
+                    commit('SET_ID', data.id);
+                    commit('SET_USERNAME', data.username);
+                    commit('SET_AVATAR', data.avatar);
+                    commit('SET_TOKEN', data.token);
+                    resolve(data);
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+        })
+    },
 
-    //         if (!data) {
-    //           reject('Verification failed, please Login again.')
-    //         }
+    // user logout
+    logout({ commit, state, dispatch }) {
+        return new Promise((resolve, reject) => {
+            logout(state.token).then(() => {
+                window.sessionStorage.clear();
+                // 此处刷新页面，重置addRouters()方法添加的动态路由
+                location.reload();
+                resolve()
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
 
-    //         const { roles, name, avatar, introduction } = data
-
-    //         // roles must be a non-empty array
-    //         if (!roles || roles.length <= 0) {
-    //           reject('getInfo: roles must be a non-null array!')
-    //         }
-
-    //         commit('SET_ROLES', roles)
-    //         commit('SET_NAME', name)
-    //         commit('SET_AVATAR', avatar)
-    //         commit('SET_INTRODUCTION', introduction)
-    //         resolve(data)
-    //       }).catch(error => {
-    //         reject(error)
-    //       })
-    //     })
-    //   },
-
-    //   // user logout
-    //   logout({ commit, state, dispatch }) {
-    //     return new Promise((resolve, reject) => {
-    //       logout(state.token).then(() => {
-    //         commit('SET_TOKEN', '')
-    //         commit('SET_ROLES', [])
-    //         removeToken()
-    //         resetRouter()
-
-    //         // reset visited views and cached views
-    //         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-    //         dispatch('tagsView/delAllViews', null, { root: true })
-
-    //         resolve()
-    //       }).catch(error => {
-    //         reject(error)
-    //       })
-    //     })
-    //   },
-
-    //   // remove token
-    //   resetToken({ commit }) {
-    //     return new Promise(resolve => {
-    //       commit('SET_TOKEN', '')
-    //       commit('SET_ROLES', [])
-    //       removeToken()
-    //       resolve()
-    //     })
-    //   },
-
-    //   // dynamically modify permissions
-    //   changeRoles({ commit, dispatch }, role) {
-    //     return new Promise(async resolve => {
-    //       const token = role + '-token'
-
-    //       commit('SET_TOKEN', token)
-    //       setToken(token)
-
-    //       const { roles } = await dispatch('getInfo')
-
-    //       resetRouter()
-
-    //       // generate accessible routes map based on roles
-    //       const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-
-    //       // dynamically add accessible routes
-    //       router.addRoutes(accessRoutes)
-
-    //       // reset visited views and cached views
-    //       dispatch('tagsView/delAllViews', null, { root: true })
-
-    //       resolve()
-    //     })
-    //   }
+    // remove token
+    resetToken({ commit }) {
+        return new Promise(resolve => {
+            commit('SET_TOKEN', '')
+            removeToken()
+            resolve()
+        })
+    },
 }
 
 export default {

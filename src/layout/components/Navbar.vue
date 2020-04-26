@@ -5,13 +5,6 @@
 
         <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
         <div class="right-menu">
-            <template v-if="device!=='mobile'">
-                <screenfull id="screenfull" class="right-menu-item hover-effect" />
-                <el-tooltip content="Global Size" effect="dark" placement="bottom">
-                    <size-select id="size-select" class="right-menu-item hover-effect" />
-                </el-tooltip>
-
-            </template>
 
             <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
                 <div class="avatar-wrapper">
@@ -20,19 +13,16 @@
                 </div>
                 <el-dropdown-menu slot="dropdown">
                     <router-link to="/profile/index">
-                        <el-dropdown-item>Profile</el-dropdown-item>
+                        <el-dropdown-item>个人中心</el-dropdown-item>
                     </router-link>
-                    <router-link to="/">
-                        <el-dropdown-item>Dashboard</el-dropdown-item>
+                    <router-link to="/home">
+                        <el-dropdown-item>系统首页</el-dropdown-item>
                     </router-link>
-                    <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
+                    <a target="_blank" href="#">
                         <el-dropdown-item>Github</el-dropdown-item>
                     </a>
-                    <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-                        <el-dropdown-item>Docs</el-dropdown-item>
-                    </a>
                     <el-dropdown-item divided>
-                        <span style="display:block;" @click="logout">Log Out</span>
+                        <span style="display:block;" @click="logout">退出登录</span>
                     </el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -44,15 +34,11 @@
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
-import Screenfull from "@/components/Screenfull";
-import SizeSelect from "@/components/SizeSelect";
 
 export default {
     components: {
         Breadcrumb,
-        Hamburger,
-        Screenfull,
-        SizeSelect
+        Hamburger
     },
     computed: {
         ...mapGetters(["sidebar", "avatar", "device"])

@@ -19,9 +19,9 @@ export const constantRoutes = [
         component: Layout,
         name: 'home',
         redirect: { name: 'dashboard' },
-        meta: { title: '主入口整体布局' },
+        // meta: { title: '主入口整体布局' },
         children: [
-            { path: '/dashboard', component: _import('dashboard'), name: 'dashboard', meta: { title: '系统首页' } },
+            { path: '/dashboard', component: _import('dashboard'), name: 'dashboard', meta: { title: '系统首页' }, hidden: true },
             { path: '/404', component: _import('common/404'), name: '404', meta: { title: '404' } }
         ]
     }
