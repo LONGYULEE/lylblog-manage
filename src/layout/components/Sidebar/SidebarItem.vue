@@ -53,7 +53,7 @@ export default {
     methods: {
         hasOneShowingChild(children = [], parent) {
             const showingChildren = children.filter(item => {
-                if (item.children.length != 0) {
+                if (!item.hidden) {
                     return false;
                 } else {
                     // Temp set(will be used if only has one showing child)
@@ -92,7 +92,7 @@ export default {
     watch: {
         item: {
             handler(newVal, oldVal) {
-                // console.log(newVal);
+                // console.log(newVal.hidden, newVal);
                 // console.log(newVal.hidden);
             },
             immediate: true

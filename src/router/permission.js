@@ -31,7 +31,6 @@ router.beforeEach((to, from, next) => {
                 store.dispatch('user/getInfo').then(() => {
                     store.dispatch('menu/GenerateRouters').then(() => {
                         router.addRoutes(store.getters.addRouters)
-                        store.commit('permission/SET_ROUTES', store.getters.addRouters)
                         next({ ...to, replace: true })
                     }).catch(error => {
                         console.log(error)

@@ -20,9 +20,23 @@ export const constantRoutes = [
         name: 'home',
         redirect: { name: 'dashboard' },
         // meta: { title: '主入口整体布局' },
+        hidden: true,
         children: [
-            { path: '/dashboard', component: _import('dashboard'), name: 'dashboard', meta: { title: '系统首页' }, hidden: true },
-            { path: '/404', component: _import('common/404'), name: '404', meta: { title: '404' } }
+            {
+                path: '/dashboard',
+                component: _import('dashboard'),
+                name: 'dashboard',
+                children: [],
+                meta: { title: '系统首页', icon: 'el-icon-s-home' },
+                hidden: true
+            },
+            {
+                path: '/404',
+                component: _import('common/404'),
+                name: '404',
+                meta: { title: '404' },
+                hidden: false
+            }
         ]
     }
 ]

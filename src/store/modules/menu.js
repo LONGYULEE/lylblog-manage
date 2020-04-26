@@ -1,14 +1,17 @@
 import { getMenuList, setMenuList, setPermission } from '@/utils/auth'
 import { generaMenu } from '@/router/permission'
+import { constantRoutes } from '@/router'
 import http from '@/utils/request'
 
 const state = {
-    addRouters: []
+    routes: [],
+    addRouters: [],
 }
 
 const mutations = {
     'SET_ROUTERS': (state, routers) => {
         state.addRouters = routers;
+        state.routes = constantRoutes.concat(routers)
     }
 
 }
