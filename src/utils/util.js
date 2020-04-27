@@ -1,3 +1,4 @@
+import Vue from 'vue'
 
 //获取uuid
 export function getUUID() {

@@ -14,13 +14,12 @@
                 </el-form-item>
                 <el-form-item prop="captcha">
                     <el-row :gutter="10">
-                        <el-col :span="16" style="height:36px">
-                            <el-input prefix-icon="el-icon-lx icon-securityCode-b" placeholder="captcha"
-                                v-model="param.captcha">
+                        <el-col :span="16">
+                            <el-input prefix-icon="el-icon-key" placeholder="captcha" v-model="param.captcha">
                             </el-input>
                         </el-col>
-                        <el-col :span="8" style="height:36px">
-                            <el-image :src="captchaUrl" alt="看不清，换一张" style="height:36px;border-radius:3px"
+                        <el-col :span="8">
+                            <el-image :src="captchaUrl" alt="看不清，换一张" style="height:40px;border-radius:3px"
                                 @click="changeCaptCha">
                             </el-image>
                         </el-col>
@@ -102,6 +101,9 @@ export default {
 </script>
 
 <style lang="css" scoped>
+.el-col {
+    height: 40px;
+}
 .login-wrap {
     position: relative;
     width: 100%;
