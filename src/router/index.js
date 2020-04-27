@@ -27,7 +27,7 @@ export const constantRoutes = [
                 component: _import('dashboard'),
                 name: 'dashboard',
                 children: [],
-                meta: { title: '系统首页', icon: 'el-icon-s-home' },
+                meta: { title: '系统首页', icon: 'shouye' },
                 hidden: true
             },
             {
