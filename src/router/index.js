@@ -12,6 +12,16 @@ const _import = require('./_import_' + process.env.NODE_ENV);
 //不需要权限通用路由表 
 //如首页和登录页和一些不用权限的公用页面
 export const constantRoutes = [
+    {
+        path: '/redirect', //tabs 栏刷新重定向路由
+        component: Layout,
+        children: [
+            {
+                path: '/redirect/:path*',
+                component: _import('common/redirect')
+            }
+        ]
+    },
     { path: '/login', component: _import('common/login'), name: 'login', meta: { title: '登录' } },
     { path: '/', redirect: '/login' },
     {
