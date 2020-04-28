@@ -2,6 +2,7 @@ import axios from 'axios'
 import qs from 'qs' // 字符串处理
 import merge from 'lodash/merge' // 合并对象工具
 import { getToken } from '@/utils/auth'
+import Router from 'vue-router'
 
 // create an axios instance
 const service = axios.create({
@@ -36,7 +37,7 @@ service.interceptors.response.use(
             //this.$cookies.remove('token');
             //删除sessionStorage中的信息
             window.sessionStorage.clear();
-            router.push('/login')
+            Router.push('/login')
             location.reload();
             Vue.prototype.$message({
                 message: '登录信息失效，请重新登录',
