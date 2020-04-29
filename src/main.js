@@ -5,6 +5,8 @@ import App from './App'
 import store from './store'
 import router from './router'
 import Element from 'element-ui'
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
 
 import myNotify from '@/utils/util' //引入封装的notify
 import request from '@/utils/request'
@@ -17,6 +19,7 @@ import '@/styles/index.scss' // 全局样式
 import './icons' // icon
 
 Vue.use(Element);
+Vue.use(mavonEditor)
 
 Vue.config.productionTip = false
 
