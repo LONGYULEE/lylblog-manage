@@ -2,9 +2,9 @@
     <div class="app-container">
         <div class="filter-container">
             <el-input v-model="listQuery.name" placeholder="分类名" style="width: 200px;" class="filter-item" clearable />
-            <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px"
-                class="filter-item">
-                <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+            <el-select v-model="listQuery.importance" placeholder="类型" clearable style="width: 100px"
+                @change="getChange" class="filter-item">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
                 搜索
@@ -57,7 +57,11 @@ export default {
             listQuery: {
                 type: 0,
                 name: ""
-            }
+            },
+            options: [
+                { value: "0", label: "文章" },
+                { value: "1", label: "阅读" }
+            ]
         };
     },
     created() {
@@ -71,8 +75,6 @@ export default {
                 method: "get",
                 params: this.$http.adornParams(this.listQuery)
             }).then(({ data }) => {
-                console.log(data);
-
                 if (data.code === 2000) {
                     this.dataList = data.data;
                 } else {
@@ -83,7 +85,10 @@ export default {
         },
         handleCreate() {},
         handleEdit() {},
-        handleDelete() {}
+        handleDelete() {},
+        getChange(val) {
+            this.listQuery.type = val;
+        }
     },
     filters: {
         changeType(data) {
