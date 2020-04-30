@@ -1,6 +1,6 @@
 <template>
     <div>
-        <mavon-editor v-model="context" :toolbars="toolbars" @keydown="" />
+        <mavon-editor v-model="context" :toolbars="toolbars" @keydown="" style="height: 500px" />
     </div>
 </template>
 
