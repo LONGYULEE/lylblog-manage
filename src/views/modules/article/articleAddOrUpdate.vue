@@ -1,7 +1,9 @@
 <template>
     <div>
         <el-tabs type="border-card" class="tab-container">
-            <el-tab-pane label="上传文件" :style="contentStyleObj">上传文件</el-tab-pane>
+            <el-tab-pane label="上传文件" :style="contentStyleObj">
+                <UpLoadFile></UpLoadFile>
+            </el-tab-pane>
             <el-tab-pane label="编辑文件" :style="contentStyleObj">
                 <mavon-editor v-model="context" :toolbars="toolbars" @imgAdd="imgAdd" @keydown=""
                     style="height: 500px" />
@@ -11,12 +13,15 @@
 </template>
 
 <script>
-import Markdown from "@/components/Markdown/index";
+import { getUpToken } from "@/api/article";
+import UpLoadFile from "./uploadFile";
 export default {
     name: "article-articleAddOrUpdate",
-    components: { Markdown },
+    components: { UpLoadFile },
     data() {
         return {
+            img_file: {},
+            upToken: "",
             contentStyleObj: {
                 height: ""
             },
@@ -67,15 +72,8 @@ export default {
             }
         },
         imgAdd(pos, $file) {
-            // 第一步.将图片上传到服务器.
-            var formdata = new FormData();
-            formdata.append("link", $file);
+            // 缓存图片信息
             this.img_file[pos] = $file;
-            this.$http({
-                url: "/admin/sys/article/imageUpload",
-                method: "post",
-                data: formdata
-            }).then(({ data }) => {});
         }
     },
     created() {
@@ -84,6 +82,13 @@ export default {
     },
     destroyed() {
         window.removeEventListener("resize", this.getHeight);
+    },
+    mounted() {
+        getUpToken().then(({ data }) => {
+            if (data.code === 2000) {
+                this.upToken = data.data;
+            }
+        });
     }
 };
 </script>

@@ -44,4 +44,5 @@ myNotity.error = (message = "") => {
     });
 }
 
+//导出封装的notify控件
 export default myNotity
