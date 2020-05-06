@@ -5,8 +5,7 @@
                 <UpLoadFile></UpLoadFile>
             </el-tab-pane>
             <el-tab-pane label="编辑文件" :style="contentStyleObj">
-                <mavon-editor v-model="context" :toolbars="toolbars" @imgAdd="imgAdd" @keydown=""
-                    style="height: 500px" />
+                <mavon-editor v-model="context" :toolbars="toolbars" @imgAdd="imgAdd" style="height: 500px" />
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -96,5 +95,8 @@ export default {
 <style lang="" scoped>
 .tab-container {
     margin: 30px;
+}
+.el-tab-pane {
+    overflow-y: auto;
 }
 </style>

@@ -83,7 +83,17 @@ export function generaMenu(routers, data) {
             routers.push(menu)
             // console.log(routers)
         } else {
-            console.log('递归')
+            let menu = {
+                path: item.url,
+                component: Layout,
+                hidden: true,
+                name: item.url,
+                meta: { title: item.name, icon: item.icon, id: item.menuId }
+            }
+            if (item.list) {
+                generaMenu(menu.children, item.list)
+            }
+            routers.push(menu)
         }
     })
 }
