@@ -29,7 +29,8 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="文章封面">
-                        <el-upload action="#" list-type="picture-card" :auto-upload="false">
+                        <el-upload :action="upload_url" list-type="picture-card" :before-upload="beforeCoverUpload"
+                            :data="qiniuData" :on-success="handleCoverSuccess" :on-error="handleError">
                             <i slot="default" class="el-icon-plus"></i>
                             <div slot="file" slot-scope="{file}">
                                 <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -65,12 +66,66 @@
 </template>
 
 <script>
+import { getUpToken, deleteFile } from "@/api/article";
 export default {
     data() {
         return {
             uploadFile: {},
-            options: []
+            options: [],
+            upload_url: "http://upload-z2.qiniup.com",
+            // 七牛云返回储存图片的子域名
+            upload_qiniu_addr: "q8ig3m2zn.bkt.clouddn.com",
+            qiniuData: {
+                key: "",
+                token: ""
+            },
+            imageUrl: ""
         };
+    },
+    methods: {
+        beforeCoverUpload(file) {
+            this.qiniuData.key = file.name;
+            const isJPG = file.type === "image/jpeg";
+            const isPNG = file.type === "image/png";
+            const isLt2M = file.size / 1024 / 1024 < 2;
+            if (!isJPG && !isPNG) {
+                this.$message.error("图片只能是 JPG/PNG 格式!");
+                return false;
+            }
+            if (!isLt2M) {
+                this.$message.error("图片大小不能超过 2MB!");
+                return false;
+            }
+        },
+        handleCoverSuccess(res, file) {
+            this.imageUrl = this.upload_qiniu_addr + "/" + res.key;
+            console.log(this.imageUrl);
+        },
+        handleError(res) {
+            this.$myNotify.error("上传失败");
+        },
+        getQiNiuToken() {
+            getUpToken().then(({ data }) => {
+                if (data.code === 2000) {
+                    this.qiniuData.token = data.data;
+                } else {
+                    this.$myNotify.error(data.data.message);
+                }
+            });
+        },
+        handleRemove(file) {
+            console.log(file);
+            deleteFile(file.response.key).then(({ data }) => {
+                if (data.data) {
+                    this.$myNotify.success("删除成功");
+                } else {
+                    this.$myNotify.error(data.data.message);
+                }
+            });
+        }
+    },
+    created() {
+        this.getQiNiuToken();
     }
 };
 </script>
