@@ -1,22 +1,25 @@
 <template>
     <div>
-        <el-tabs type="border-card" class="tab-container">
-            <el-tab-pane label="上传文件" :style="contentStyleObj">
-                <UpLoadFile></UpLoadFile>
-            </el-tab-pane>
-            <el-tab-pane label="编辑文件" :style="contentStyleObj">
-                <mavon-editor v-model="context" :toolbars="toolbars" @imgAdd="imgAdd" style="height: 500px" />
-            </el-tab-pane>
-        </el-tabs>
+        <mavon-editor v-model="context" :toolbars="toolbars" @imgAdd="imgAdd" :style="contentStyleObj" class="editor" />
+        <div class="box">
+            <el-button type="primary" class="createBtn" @click="createArticle" round>创建文章</el-button>
+        </div>
+        <el-dialog title="创建文章" :visible.sync="showCreateArticle" :close-on-click-modal="false" class="mydialog">
+            <CreateArticle style="height:50vh;overflow-y:auto"></CreateArticle>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showCreateArticle = false">取 消</el-button>
+                <el-button type="primary" @click="handleSave">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import { getUpToken } from "@/api/article";
-import UpLoadFile from "./uploadFile";
+import CreateArticle from "./createArticle";
 export default {
     name: "article-articleAddOrUpdate",
-    components: { UpLoadFile },
+    components: { CreateArticle },
     data() {
         return {
             img_file: {},
@@ -24,6 +27,7 @@ export default {
             contentStyleObj: {
                 height: ""
             },
+            showCreateArticle: false,
             context: "", //输入的数据
             toolbars: {
                 bold: true, // 粗体
@@ -73,7 +77,11 @@ export default {
         imgAdd(pos, $file) {
             // 缓存图片信息
             this.img_file[pos] = $file;
-        }
+        },
+        createArticle() {
+            this.showCreateArticle = true;
+        },
+        handleSave() {}
     },
     created() {
         window.addEventListener("resize", this.getHeight);
@@ -93,10 +101,13 @@ export default {
 </script>
 
 <style lang="" scoped>
-.tab-container {
-    margin: 30px;
+.editor {
+    margin: 20px;
+    z-index: inherit;
 }
-.el-tab-pane {
-    overflow-y: auto;
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

@@ -20,7 +20,7 @@
         </div>
 
         <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row
-            style="width: 100%;">
+            style="width: 100%;" :height="height">
             <el-table-column type="index" width="50">
             </el-table-column>
             <el-table-column type="selection" width="55" align="center"></el-table-column>
@@ -56,11 +56,14 @@ export default {
         return {
             dataList: [],
             listLoading: false,
-            tableKey: 0
+            tableKey: 0,
+            height: ""
         };
     },
     created() {
         this.getDataList();
+        window.addEventListener("resize", this.getHeight);
+        this.getHeight();
     },
     methods: {
         getDataList() {
@@ -76,7 +79,14 @@ export default {
         },
         handleCreate() {},
         handleEdit() {},
-        handleDelete() {}
+        handleDelete() {},
+        getHeight() {
+            if (this.$store.state.settings.tagsView) {
+                this.height = window.innerHeight - 215 + "px";
+            } else {
+                this.height = window.innerHeight - 181 + "px";
+            }
+        }
     },
     filters: {
         changeType(data) {
@@ -88,6 +98,9 @@ export default {
                 return "按钮";
             }
         }
+    },
+    destroyed() {
+        window.removeEventListener("resize", this.getHeight);
     }
 };
 </script>
