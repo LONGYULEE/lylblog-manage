@@ -1,6 +1,7 @@
 <template>
     <div>
-        <mavon-editor v-model="context" :toolbars="toolbars" @imgAdd="imgAdd" :style="contentStyleObj" class="editor" />
+        <mavon-editor v-model="context" ref="md" :toolbars="toolbars" @imgAdd="imgAdd" :style="contentStyleObj"
+            class="editor" />
         <div class="box">
             <el-button type="primary" class="createBtn" @click="createArticle" round>创建文章</el-button>
         </div>
@@ -22,6 +23,8 @@ export default {
     components: { CreateArticle },
     data() {
         return {
+            uploadUrl: "http://up-z2.qiniup.com/putb64/-1", //七牛云base64上传地址
+            domain: "http://qa0ekk731.bkt.clouddn.com", //七牛云的外链地址 TODO:此处地址通过引入方式方便后期更换
             img_file: {},
             upToken: "",
             contentStyleObj: {
@@ -75,8 +78,27 @@ export default {
             }
         },
         imgAdd(pos, $file) {
+            let that = this;
             // 缓存图片信息
-            this.img_file[pos] = $file;
+            var formdata = new FormData();
+            formdata.append("image", $file);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", this.uploadUrl, true);
+            //文本类型
+            xhr.setRequestHeader("Content-Type", "application/octet-stream");
+            //七牛认证信息 注意空格
+            xhr.setRequestHeader("Authorization", "UpToken " + this.upToken);
+
+            xhr.send($file.miniurl.substring($file.miniurl.indexOf(",") + 1));
+            //监听状态
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    var result = xhr.responseText;
+                    console.log("上传请求结果数据:" + result);
+                    result = JSON.parse(result);
+                    that.$refs.md.$img2Url(pos, that.domain + "/" + result.key);
+                }
+            };
         },
         createArticle() {
             this.showCreateArticle = true;

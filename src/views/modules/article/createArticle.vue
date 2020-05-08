@@ -74,7 +74,7 @@ export default {
             options: [],
             upload_url: "http://upload-z2.qiniup.com",
             // 七牛云返回储存图片的子域名
-            upload_qiniu_addr: "q8ig3m2zn.bkt.clouddn.com",
+            upload_qiniu_addr: "qa0ekk731.bkt.clouddn.com",
             qiniuData: {
                 key: "",
                 token: ""
