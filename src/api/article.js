@@ -6,11 +6,3 @@ export function getUpToken() {
         method: 'get'
     })
 }
-
-export function deleteFile(data) {
-    return request({
-        url: '/admin/sys/article/deleteFile',
-        method: 'get',
-        data: data
-    })
-}

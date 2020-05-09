@@ -6,7 +6,7 @@
             <el-button type="primary" class="createBtn" @click="createArticle" round>创建文章</el-button>
         </div>
         <el-dialog title="创建文章" :visible.sync="showCreateArticle" :close-on-click-modal="false" class="mydialog">
-            <CreateArticle style="height:50vh;overflow-y:auto"></CreateArticle>
+            <CreateArticle :context="context" style="height:50vh;overflow-y:auto"></CreateArticle>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="showCreateArticle = false">取 消</el-button>
                 <el-button type="primary" @click="handleSave">确 定</el-button>

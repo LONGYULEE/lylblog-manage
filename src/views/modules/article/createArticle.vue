@@ -12,26 +12,26 @@
                             <el-input v-model="uploadFile.author"></el-input>
                         </el-form-item>
                         <el-form-item label="文章描述">
-                            <el-input v-model="uploadFile.description" type="textarea"
-                                :autosize="{ minRows: 2, maxRows: 3}"></el-input>
+                            <el-input v-model="context" type="textarea" :autosize="{ minRows: 2, maxRows: 3}">
+                            </el-input>
                         </el-form-item>
                         <el-form-item label="文章分类">
-                            <el-select v-model="value1" multiple placeholder="请选择" style="width:100%">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                            <el-select v-model="uploadFile.categoryId" multiple placeholder="请选择" style="width:100%">
+                                <el-option v-for="item in categoryOptions" :key="item.value" :label="item.label"
                                     :clearable="true" :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="文章标签">
-                            <el-select v-model="value1" multiple placeholder="请选择" style="width:100%">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                            <el-select v-model="uploadFile.tagId" multiple placeholder="请选择" style="width:100%">
+                                <el-option v-for="item in tagOptions" :key="item.value" :label="item.label"
                                     :clearable="true" :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="文章封面">
                             <el-upload :action="upload_url" list-type="picture-card" :before-upload="beforeCoverUpload"
-                                :data="qiniuData" :on-success="handleCoverSuccess" :on-error="handleError">
+                                :data="qiniuData" :on-success="handleCoverSuccess" :on-error="handleError" :limit="1">
                                 <i slot="default" class="el-icon-plus"></i>
                                 <div slot="file" slot-scope="{file}">
                                     <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
@@ -72,11 +72,22 @@
 import { getUpToken, deleteFile } from "@/api/article";
 import MyScrollBar from "../../common/myscrollbar";
 export default {
+    props: { context: "" },
     components: { MyScrollBar },
     data() {
         return {
-            uploadFile: {},
-            options: [],
+            uploadFile: {
+                title: "",
+                author: "",
+                description: "",
+                categoryId: [],
+                tagId: [],
+                recommend: false,
+                top: false,
+                context: ""
+            },
+            categoryOptions: [],
+            tagOptions: [],
             upload_url: "http://upload-z2.qiniup.com",
             // 七牛云返回储存图片的子域名
             upload_qiniu_addr: "qa0ekk731.bkt.clouddn.com",
@@ -84,7 +95,9 @@ export default {
                 key: "",
                 token: ""
             },
-            imageUrl: ""
+            imageUrl: "",
+            disabled: false,
+            dialogVisible: false
         };
     },
     methods: {
@@ -119,14 +132,19 @@ export default {
             });
         },
         handleRemove(file) {
-            console.log(file);
-            deleteFile(file.response.key).then(({ data }) => {
-                if (data.data) {
-                    this.$myNotify.success("删除成功");
-                } else {
-                    this.$myNotify.error(data.data.message);
-                }
-            });
+            this.$http
+                .get("/admin/sys/article/deleteFile?key=" + file.response.key)
+                .then(({ data }) => {
+                    if (data.data) {
+                        this.$myNotify.success("删除成功");
+                    } else {
+                        this.$myNotify.error(data.data.message);
+                    }
+                });
+        },
+        handlePictureCardPreview(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
         }
     },
     created() {
