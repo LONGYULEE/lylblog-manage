@@ -105,7 +105,7 @@ export default {
     height: 40px;
 }
 .login-wrap {
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
     /* background-image: url(../../assets/img/login-bg.jpg); */

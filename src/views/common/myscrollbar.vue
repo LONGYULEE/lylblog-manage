@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="test">
         <vue-scroll :ops="ops">
             <slot></slot>
         </vue-scroll>
