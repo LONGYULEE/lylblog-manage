@@ -1,70 +1,65 @@
 <template>
     <div>
-        <MyScrollBar style="width:100%;height:100%">
-            <div class="myForm" ref="info">
-                <el-col :xs="0" :sm="4" :md="4" :lg="4" :xl="4"></el-col>
-                <el-col :xs="24" :sm="16" :md="16" :lg="16" :xl="16">
-                    <el-form ref="form" :model="uploadFile" label-width="80px">
-                        <el-form-item label="文章名称">
-                            <el-input v-model="uploadFile.title"></el-input>
-                        </el-form-item>
-                        <el-form-item label="文章作者">
-                            <el-input v-model="uploadFile.author"></el-input>
-                        </el-form-item>
-                        <el-form-item label="文章描述">
-                            <el-input v-model="context" type="textarea" :autosize="{ minRows: 2, maxRows: 3}">
-                            </el-input>
-                        </el-form-item>
-                        <el-form-item label="文章分类">
-                            <el-select v-model="uploadFile.categoryId" multiple placeholder="请选择" style="width:100%">
-                                <el-option v-for="item in categoryOptions" :key="item.value" :label="item.label"
-                                    :clearable="true" :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="文章标签">
-                            <el-select v-model="uploadFile.tagId" multiple placeholder="请选择" style="width:100%">
-                                <el-option v-for="item in tagOptions" :key="item.value" :label="item.label"
-                                    :clearable="true" :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="文章封面">
-                            <el-upload :action="upload_url" list-type="picture-card" :before-upload="beforeCoverUpload"
-                                :data="qiniuData" :on-success="handleCoverSuccess" :on-error="handleError" :limit="1">
-                                <i slot="default" class="el-icon-plus"></i>
-                                <div slot="file" slot-scope="{file}">
-                                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-                                    <span class="el-upload-list__item-actions">
-                                        <span class="el-upload-list__item-preview"
-                                            @click="handlePictureCardPreview(file)">
-                                            <i class="el-icon-zoom-in"></i>
-                                        </span>
-                                        <span v-if="!disabled" class="el-upload-list__item-delete"
-                                            @click="handleRemove(file)">
-                                            <i class="el-icon-delete"></i>
-                                        </span>
-                                    </span>
-                                </div>
-                            </el-upload>
-                        </el-form-item>
-                        <el-form-item label="是否推荐">
-                            <div>
-                                <el-radio v-model="uploadFile.recommend" :label="true" border>不推荐</el-radio>
-                                <el-radio v-model="uploadFile.recommend" :label="false" border>推荐</el-radio>
-                            </div>
-                        </el-form-item>
-                        <el-form-item label="是否置顶">
-                            <div>
-                                <el-radio v-model="uploadFile.top" :label="true" border>不置顶</el-radio>
-                                <el-radio v-model="uploadFile.top" :label="false" border>置顶</el-radio>
-                            </div>
-                        </el-form-item>
-                    </el-form>
-                </el-col>
-                <el-col :xs="0" :sm="4" :md="4" :lg="4" :xl="4"></el-col>
-            </div>
-        </MyScrollBar>
+        <!-- <MyScrollBar style="width:100%;height:100%"> -->
+        <div class="myForm" ref="info">
+            <el-col :span="1"></el-col>
+            <el-col :span="22">
+                <el-form ref="form" :model="uploadFile" label-width="80px">
+                    <el-form-item label="文章名称">
+                        <el-input v-model="uploadFile.title"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文章作者">
+                        <el-input v-model="uploadFile.author"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文章描述">
+                        <el-input v-model="context" type="textarea" :autosize="{ minRows: 2, maxRows: 3}">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="文章分类">
+                        <el-select v-model="uploadFile.categoryId" multiple placeholder="请选择" style="width:100%">
+                            <el-option v-for="item in categoryOptions" :key="item.value" :label="item.label"
+                                :clearable="true" :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="文章标签">
+                        <el-select v-model="uploadFile.tagId" multiple placeholder="请选择" style="width:100%">
+                            <el-option v-for="item in tagOptions" :key="item.value" :label="item.label"
+                                :clearable="true" :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="文章封面">
+                        <el-upload class="avatar-uploader" :action="upload_url" :show-file-list="false"
+                            :on-success="handleCoverSuccess" :before-upload="beforeCoverUpload" :data="qiniuData"
+                            :on-preview="handleCoverPreview" :on-remove="handleRemove">
+                            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="是否推荐">
+                        <div>
+                            <el-radio v-model="uploadFile.recommend" :label="true" border>不推荐</el-radio>
+                            <el-radio v-model="uploadFile.recommend" :label="false" border>推荐</el-radio>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="是否置顶">
+                        <div>
+                            <el-radio v-model="uploadFile.top" :label="true" border>不置顶</el-radio>
+                            <el-radio v-model="uploadFile.top" :label="false" border>置顶</el-radio>
+                        </div>
+                    </el-form-item>
+                </el-form>
+
+            </el-col>
+            <el-col :span="1"></el-col>
+        </div>
+        <div class="btnDiv">
+            <el-button type="info" plain>取消</el-button>
+            <el-button type="primary">确认</el-button>
+        </div>
+        <!-- </MyScrollBar> -->
     </div>
 </template>
 
@@ -90,7 +85,7 @@ export default {
             tagOptions: [],
             upload_url: "http://upload-z2.qiniup.com",
             // 七牛云返回储存图片的子域名
-            upload_qiniu_addr: "qa0ekk731.bkt.clouddn.com",
+            upload_qiniu_addr: "http://qa0ekk731.bkt.clouddn.com",
             qiniuData: {
                 key: "",
                 token: ""
@@ -103,6 +98,7 @@ export default {
     methods: {
         beforeCoverUpload(file) {
             this.qiniuData.key = file.name;
+            console.log(this.qiniuData.token);
             const isJPG = file.type === "image/jpeg";
             const isPNG = file.type === "image/png";
             const isLt2M = file.size / 1024 / 1024 < 2;
@@ -142,7 +138,7 @@ export default {
                     }
                 });
         },
-        handlePictureCardPreview(file) {
+        handleCoverPreview(file) {
             this.dialogImageUrl = file.url;
             this.dialogVisible = true;
         }
@@ -158,5 +154,38 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.btnDiv {
+    position: absolute;
+    bottom: 0px;
+    border-top: 1px solid #e8e8e8;
+    text-align: right;
+    width: 100%;
+    padding: 16px;
+}
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+    border-color: #409eff;
+}
+.avatar-uploader-icon {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+}
+.avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
 }
 </style>

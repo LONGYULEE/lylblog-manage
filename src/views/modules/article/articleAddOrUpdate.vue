@@ -3,15 +3,20 @@
         <mavon-editor v-model="context" ref="md" :toolbars="toolbars" @imgAdd="imgAdd" :style="contentStyleObj"
             class="editor" />
         <div class="box">
-            <el-button type="primary" class="createBtn" @click="createArticle" round>创建文章</el-button>
+            <el-button type="primary" class="createBtn" @click="createArticle">创建文章</el-button>
         </div>
-        <el-dialog title="创建文章" :visible.sync="showCreateArticle" :close-on-click-modal="false" class="mydialog">
+        <!-- <el-dialog title="创建文章" :visible.sync="showCreateArticle" :close-on-click-modal="false" class="mydialog">
             <CreateArticle :context="context" style="height:50vh;overflow-y:auto"></CreateArticle>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="showCreateArticle = false">取 消</el-button>
                 <el-button type="primary" @click="handleSave">确 定</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
+
+        <el-drawer title="我是标题" :visible.sync="drawer" size="45%" :before-close="handleClose">
+            <div slot="title" class="title">创建文章</div>
+            <CreateArticle :context="context" style="overflow-y:auto"></CreateArticle>
+        </el-drawer>
     </div>
 </template>
 
@@ -23,6 +28,7 @@ export default {
     components: { CreateArticle },
     data() {
         return {
+            drawer: false,
             uploadUrl: "http://up-z2.qiniup.com/putb64/-1", //七牛云base64上传地址
             domain: "http://qa0ekk731.bkt.clouddn.com", //七牛云的外链地址 TODO:此处地址通过引入方式方便后期更换
             img_file: {},
@@ -70,12 +76,9 @@ export default {
         };
     },
     methods: {
+        handleClose() {},
         getHeight() {
-            if (this.$store.state.settings.tagsView) {
-                this.contentStyleObj.height = window.innerHeight - 215 + "px";
-            } else {
-                this.contentStyleObj.height = window.innerHeight - 181 + "px";
-            }
+            this.contentStyleObj.height = window.innerHeight - 185 + "px";
         },
         imgAdd(pos, $file) {
             let that = this;
@@ -102,6 +105,7 @@ export default {
         },
         createArticle() {
             this.showCreateArticle = true;
+            this.drawer = true;
         },
         handleSave() {}
     },
@@ -118,6 +122,20 @@ export default {
                 this.upToken = data.data;
             }
         });
+    },
+    watch: {
+        flag(n) {
+            if (n) {
+                this.contentStyleObj.height = window.innerHeight - 185 + "px";
+            } else {
+                this.contentStyleObj.height = window.innerHeight - 151 + "px";
+            }
+        }
+    },
+    computed: {
+        flag() {
+            return this.$store.state.settings.tagsView;
+        }
     }
 };
 </script>
@@ -131,5 +149,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.title {
+    font-size: 20px;
 }
 </style>
