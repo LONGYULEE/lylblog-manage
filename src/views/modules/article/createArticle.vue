@@ -30,13 +30,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="文章封面">
-                        <el-upload class="avatar-uploader" :action="upload_url" :show-file-list="false"
-                            :on-success="handleCoverSuccess" :before-upload="beforeCoverUpload" :data="qiniuData"
-                            :on-preview="handleCoverPreview" :on-remove="handleRemove">
-                            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-
-                        </el-upload>
+                        <upload-cover @coverurl="getcoverurl"></upload-cover>
                     </el-form-item>
                     <el-form-item label="是否推荐">
                         <div>
@@ -64,11 +58,11 @@
 </template>
 
 <script>
-import { getUpToken, deleteFile } from "@/api/article";
 import MyScrollBar from "../../common/myscrollbar";
+import UploadCover from "./uploadCover";
 export default {
     props: { context: "" },
-    components: { MyScrollBar },
+    components: { MyScrollBar, UploadCover },
     data() {
         return {
             uploadFile: {
@@ -79,73 +73,19 @@ export default {
                 tagId: [],
                 recommend: false,
                 top: false,
-                context: ""
+                context: "",
+                cover: ""
             },
             categoryOptions: [],
-            tagOptions: [],
-            upload_url: "http://upload-z2.qiniup.com",
-            // 七牛云返回储存图片的子域名
-            upload_qiniu_addr: "http://qa0ekk731.bkt.clouddn.com",
-            qiniuData: {
-                key: "",
-                token: ""
-            },
-            imageUrl: "",
-            disabled: false,
-            dialogVisible: false
+            tagOptions: []
         };
     },
     methods: {
-        beforeCoverUpload(file) {
-            this.qiniuData.key = file.name;
-            console.log(this.qiniuData.token);
-            const isJPG = file.type === "image/jpeg";
-            const isPNG = file.type === "image/png";
-            const isLt2M = file.size / 1024 / 1024 < 2;
-            if (!isJPG && !isPNG) {
-                this.$message.error("图片只能是 JPG/PNG 格式!");
-                return false;
-            }
-            if (!isLt2M) {
-                this.$message.error("图片大小不能超过 2MB!");
-                return false;
-            }
-        },
-        handleCoverSuccess(res, file) {
-            this.imageUrl = this.upload_qiniu_addr + "/" + res.key;
-            console.log(this.imageUrl);
-        },
-        handleError(res) {
-            this.$myNotify.error("上传失败");
-        },
-        getQiNiuToken() {
-            getUpToken().then(({ data }) => {
-                if (data.code === 2000) {
-                    this.qiniuData.token = data.data;
-                } else {
-                    this.$myNotify.error(data.data.message);
-                }
-            });
-        },
-        handleRemove(file) {
-            this.$http
-                .get("/admin/sys/article/deleteFile?key=" + file.response.key)
-                .then(({ data }) => {
-                    if (data.data) {
-                        this.$myNotify.success("删除成功");
-                    } else {
-                        this.$myNotify.error(data.data.message);
-                    }
-                });
-        },
-        handleCoverPreview(file) {
-            this.dialogImageUrl = file.url;
-            this.dialogVisible = true;
+        getcoverurl(data) {
+            this.uploadFile.cover = data;
         }
     },
-    created() {
-        this.getQiNiuToken();
-    }
+    created() {}
 };
 </script>
 
