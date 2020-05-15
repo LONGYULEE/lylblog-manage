@@ -2,8 +2,8 @@
     <div>
         <!-- <MyScrollBar style="width:100%;height:100%"> -->
         <div class="myForm" ref="info">
-            <el-col :span="1"></el-col>
-            <el-col :span="22">
+            <el-col :xs="1" :sm="1" :md="1" :lg="2" :xl="2"></el-col>
+            <el-col :xs="22" :sm="22" :md="22" :lg="20" :xl="20">
                 <el-form ref="form" :model="uploadFile" label-width="80px">
                     <el-form-item label="文章名称">
                         <el-input v-model="uploadFile.title"></el-input>
@@ -47,7 +47,7 @@
                 </el-form>
 
             </el-col>
-            <el-col :span="1"></el-col>
+            <el-col :xs="1" :sm="1" :md="1" :lg="2" :xl="2"></el-col>
         </div>
         <div class="btnDiv">
             <el-button type="info" plain>取消</el-button>
