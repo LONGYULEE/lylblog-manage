@@ -12,7 +12,8 @@
                         <el-input v-model="uploadFile.author"></el-input>
                     </el-form-item>
                     <el-form-item label="文章描述">
-                        <el-input v-model="context" type="textarea" :autosize="{ minRows: 2, maxRows: 3}">
+                        <el-input v-model="uploadFile.description" type="textarea"
+                            :autosize="{ minRows: 2, maxRows: 3}">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="文章分类">
@@ -50,7 +51,7 @@
             <el-col :xs="1" :sm="1" :md="1" :lg="2" :xl="2"></el-col>
         </div>
         <div class="btnDiv">
-            <el-button type="info" plain>取消</el-button>
+            <el-button type="info" @click="cancel" plain>取消</el-button>
             <el-button type="primary">确认</el-button>
         </div>
         <!-- </MyScrollBar> -->
@@ -63,6 +64,7 @@ import UploadCover from "./uploadCover";
 export default {
     props: { context: "" },
     components: { MyScrollBar, UploadCover },
+    name: "CreateArticle",
     data() {
         return {
             uploadFile: {
@@ -83,9 +85,42 @@ export default {
     methods: {
         getcoverurl(data) {
             this.uploadFile.cover = data;
+        },
+        cancel() {
+            this.getDataObj();
+        },
+        getDataObj() {
+            for (let test in this.uploadFile) {
+                if (
+                    test != "categoryId" ||
+                    test != "tagId" ||
+                    test != "recommend" ||
+                    test != "top"
+                ) {
+                    if (this.uploadFile[test] != "" || this.context != "") {
+                        this.$confirm("还有内容未保存，是否离开?", "提示", {
+                            confirmButtonText: "确定",
+                            cancelButtonText: "取消",
+                            type: "warning"
+                        })
+                            .then(() => {
+                                this.$emit("closeDrawer", false);
+                            })
+                            .catch(error => {
+                                console.log(error);
+                            });
+                    } else {
+                        this.$emit("closeDrawer", false);
+                    }
+                }
+            }
         }
     },
-    created() {}
+    watch: {
+        context(n) {
+            console.log(n);
+        }
+    }
 };
 </script>
 
