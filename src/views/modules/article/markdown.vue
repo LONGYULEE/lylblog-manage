@@ -56,6 +56,7 @@ export default {
         };
     },
     methods: {
+        //上传图片，前端直接上传
         imgAdd(pos, $file) {
             let that = this;
             // 缓存图片信息
@@ -84,7 +85,9 @@ export default {
         }
     },
     created() {
+        //监听窗体尺寸改变事件
         window.addEventListener("resize", this.getHeight);
+        //初始化markdown的高度
         this.getHeight();
     },
     mounted() {
@@ -103,6 +106,7 @@ export default {
         window.removeEventListener("resize", this.getHeight);
     },
     watch: {
+        //监听是否显示tagView，来动态改变markdown的大小
         flag(n) {
             if (n) {
                 this.contentStyleObj.height = window.innerHeight - 185 + "px";
@@ -111,7 +115,7 @@ export default {
             }
         },
         context(n) {
-            // 通过bus传递context
+            //像父组件传递文章内容
             this.$emit("markdownContext", n);
         }
     }

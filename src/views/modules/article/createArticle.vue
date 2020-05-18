@@ -73,7 +73,7 @@ export default {
                 tagId: [],
                 recommend: false,
                 top: false,
-                context: "",
+                content: "",
                 cover: "",
                 coverType: 2, // 默认无图片
                 type: 0
@@ -104,27 +104,32 @@ export default {
             this.getDataObj();
         },
         submit() {
-            this.$refs.articleForm.validate(valid => {
+            let that = this;
+            that.$refs.articleForm.validate(valid => {
                 if (valid) {
                     // 转化categoryId
-                    this.uploadFile.categoryId = this.categoryOptionsSelect.join(
+                    that.uploadFile.categoryId = that.categoryOptionsSelect.join(
                         ","
                     );
-                    this.$http({
+                    that.$http({
                         url: `/admin/article/${
-                            !this.uploadFile.id ? "save" : "update"
+                            !that.uploadFile.id ? "save" : "update"
                         }`,
-                        method: !this.uploadFile.id ? "post" : "put",
-                        data: this.$http.adornData(this.uploadFile)
+                        method: !that.uploadFile.id ? "post" : "put",
+                        data: that.$http.adornData(that.uploadFile)
                     }).then(({ data }) => {
-                        if (data && data.code === 200) {
-                            this.$message.success("保存博文成功");
+                        if (data && data.code === 2000) {
+                            that.$message.success("保存博文成功");
                             // 关闭当前标签
-                            // this.$emit("closeCurrentTabs");
-                            // 跳转到list
-                            this.$router.push("/article-article");
+                            that.$store
+                                .dispatch("tagsView/delView", that.$route)
+                                .then(e => {
+                                    console.log(e);
+                                });
+                            // 跳转到 articleList
+                            that.$router.push("/article-article");
                         } else {
-                            this.$message.error(data.msg);
+                            that.$message.error(data.msg);
                         }
                     });
                 } else {
@@ -145,6 +150,7 @@ export default {
                     console.log(error);
                 });
         },
+        //获取标签信息
         getTag() {
             this.$http
                 .get("/admin/operation/tag/select?type=0")
@@ -156,6 +162,7 @@ export default {
                     }
                 });
         },
+        //获取分类信息
         getCategoy() {
             this.$http
                 .get("/admin/operation/category/select?type=0")
@@ -173,18 +180,8 @@ export default {
         this.getCategoy();
     },
     mounted() {
-        var that = this;
-        // 用$on事件来接收参数
-        Bus.$on("context", data => {
-            console.log(data);
-            that.context = data;
-        });
-    },
-    watch: {
-        context(n) {
-            console.log(n);
-            this.uploadFile.context = n;
-        }
+        //获取父组件的值，有时候父组件还有一个父组件，需要多层的 $parent
+        this.uploadFile.content = this.$parent.$parent.context;
     }
 };
 </script>
