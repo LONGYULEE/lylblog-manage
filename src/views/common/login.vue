@@ -15,7 +15,8 @@
                 <el-form-item prop="captcha">
                     <el-row :gutter="10">
                         <el-col :span="16">
-                            <el-input prefix-icon="el-icon-key" placeholder="captcha" v-model="param.captcha">
+                            <el-input prefix-icon="el-icon-key" placeholder="captcha" @keyup.enter.native="submitForm"
+                                v-model="param.captcha">
                             </el-input>
                         </el-col>
                         <el-col :span="8">

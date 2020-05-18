@@ -68,7 +68,7 @@ export default {
         },
         handleRemove(file) {
             this.$http
-                .get("/admin/sys/article/deleteFile?key=" + file.response.key)
+                .get("/admin/article/deleteFile?key=" + file.response.key)
                 .then(({ data }) => {
                     if (data.data) {
                         this.$myNotify.success("删除成功");

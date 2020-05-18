@@ -4,6 +4,7 @@
 
 <script>
 export default {
+    name: "article-article",
     components: {},
     props: {},
     data() {

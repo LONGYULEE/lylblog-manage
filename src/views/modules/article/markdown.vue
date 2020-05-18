@@ -111,6 +111,7 @@ export default {
             }
         },
         context(n) {
+            // 通过bus传递context
             this.$emit("markdownContext", n);
         }
     }

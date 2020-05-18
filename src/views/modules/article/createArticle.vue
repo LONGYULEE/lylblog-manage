@@ -4,8 +4,8 @@
         <div class="myForm" ref="info">
             <el-col :xs="1" :sm="1" :md="1" :lg="2" :xl="2"></el-col>
             <el-col :xs="22" :sm="22" :md="22" :lg="20" :xl="20">
-                <el-form ref="form" :model="uploadFile" label-width="80px">
-                    <el-form-item label="文章名称">
+                <el-form :model="uploadFile" label-width="80px" :rules="rules" ref="articleForm" hide-required-asterisk>
+                    <el-form-item label="文章名称" prop="title">
                         <el-input v-model="uploadFile.title"></el-input>
                     </el-form-item>
                     <el-form-item label="文章作者">
@@ -16,19 +16,16 @@
                             :autosize="{ minRows: 2, maxRows: 3}">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="文章分类">
-                        <el-select v-model="uploadFile.categoryId" multiple placeholder="请选择" style="width:100%">
-                            <el-option v-for="item in categoryOptions" :key="item.value" :label="item.label"
-                                :clearable="true" :value="item.value">
+                    <el-form-item label="文章标签">
+                        <el-select v-model="uploadFile.tagId" multiple placeholder="请选择" style="width:100%">
+                            <el-option v-for="item in tagOptions" :key="item.id" :label="item.name" :clearable="true"
+                                :value="item.id">
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="文章标签">
-                        <el-select v-model="uploadFile.tagId" multiple placeholder="请选择" style="width:100%">
-                            <el-option v-for="item in tagOptions" :key="item.value" :label="item.label"
-                                :clearable="true" :value="item.value">
-                            </el-option>
-                        </el-select>
+                    <el-form-item label="文章分类">
+                        <el-cascader v-model="categoryOptionsSelect" :clearable="true" :options="categoryOptions"
+                            :props="categoryListTreeProps" style="width:100%"></el-cascader>
                     </el-form-item>
                     <el-form-item label="文章封面">
                         <upload-cover @coverurl="getcoverurl"></upload-cover>
@@ -52,7 +49,7 @@
         </div>
         <div class="btnDiv">
             <el-button type="info" @click="cancel" plain>取消</el-button>
-            <el-button type="primary">确认</el-button>
+            <el-button type="primary" @click="submit">确认</el-button>
         </div>
         <!-- </MyScrollBar> -->
     </div>
@@ -61,6 +58,7 @@
 <script>
 import MyScrollBar from "../../common/myscrollbar";
 import UploadCover from "./uploadCover";
+import { treeDataTranslate } from "@/utils/util";
 export default {
     props: { context: "" },
     components: { MyScrollBar, UploadCover },
@@ -76,10 +74,26 @@ export default {
                 recommend: false,
                 top: false,
                 context: "",
-                cover: ""
+                cover: "",
+                coverType: 2, // 默认无图片
+                type: 0
             },
             categoryOptions: [],
-            tagOptions: []
+            tagOptions: [],
+            categoryOptionsSelect: [],
+            categoryListTreeProps: {
+                label: "name",
+                children: "children",
+                value: "id",
+                expandTrigger: "hover"
+            },
+            rules: {
+                title: {
+                    required: true,
+                    message: "请输入博文标题",
+                    trigger: "change"
+                }
+            }
         };
     },
     methods: {
@@ -89,36 +103,87 @@ export default {
         cancel() {
             this.getDataObj();
         },
-        getDataObj() {
-            for (let test in this.uploadFile) {
-                if (
-                    test != "categoryId" ||
-                    test != "tagId" ||
-                    test != "recommend" ||
-                    test != "top"
-                ) {
-                    if (this.uploadFile[test] != "" || this.context != "") {
-                        this.$confirm("还有内容未保存，是否离开?", "提示", {
-                            confirmButtonText: "确定",
-                            cancelButtonText: "取消",
-                            type: "warning"
-                        })
-                            .then(() => {
-                                this.$emit("closeDrawer", false);
-                            })
-                            .catch(error => {
-                                console.log(error);
-                            });
-                    } else {
-                        this.$emit("closeDrawer", false);
-                    }
+        submit() {
+            this.$refs.articleForm.validate(valid => {
+                if (valid) {
+                    // 转化categoryId
+                    this.uploadFile.categoryId = this.categoryOptionsSelect.join(
+                        ","
+                    );
+                    this.$http({
+                        url: `/admin/article/${
+                            !this.uploadFile.id ? "save" : "update"
+                        }`,
+                        method: !this.uploadFile.id ? "post" : "put",
+                        data: this.$http.adornData(this.uploadFile)
+                    }).then(({ data }) => {
+                        if (data && data.code === 200) {
+                            this.$message.success("保存博文成功");
+                            // 关闭当前标签
+                            // this.$emit("closeCurrentTabs");
+                            // 跳转到list
+                            this.$router.push("/article-article");
+                        } else {
+                            this.$message.error(data.msg);
+                        }
+                    });
+                } else {
+                    return false;
                 }
-            }
+            });
+        },
+        getDataObj() {
+            this.$confirm("还有内容未保存，是否离开?", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+            })
+                .then(() => {
+                    this.$emit("closeDrawer", false);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        getTag() {
+            this.$http
+                .get("/admin/operation/tag/select?type=0")
+                .then(({ data }) => {
+                    if (data.code === 2000) {
+                        this.tagOptions = data.data;
+                    } else {
+                        this.$myNotify.error(data.message);
+                    }
+                });
+        },
+        getCategoy() {
+            this.$http
+                .get("/admin/operation/category/select?type=0")
+                .then(({ data }) => {
+                    if (data.code === 2000) {
+                        this.categoryOptions = treeDataTranslate(data.data);
+                    } else {
+                        this.$myNotify.error(data.message);
+                    }
+                });
         }
+    },
+    created() {
+        this.getTag();
+        this.getCategoy();
+    },
+    mounted() {
+        var that = this;
+        // 用$on事件来接收参数
+        Bus.$on("context", data => {
+            console.log(data);
+            that.context = data;
+        });
     },
     watch: {
         context(n) {
             console.log(n);
+            this.uploadFile.context = n;
         }
     }
 };

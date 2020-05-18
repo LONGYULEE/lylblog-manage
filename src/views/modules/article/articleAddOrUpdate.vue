@@ -5,7 +5,7 @@
             <el-button type="primary" class="createBtn" @click="createArticle">创建文章</el-button>
         </div>
 
-        <el-drawer title="我是标题" :visible.sync="drawer" size="45%" :before-close="handleClose">
+        <el-drawer title="我是标题" :visible.sync="drawer" size="45%" :wrapperClosable="false" :before-close="handleClose">
             <div slot="title" class="title">创建文章</div>
             <CreateArticle :context="context" @closeDrawer="closeDrawer" style="overflow-y:auto"></CreateArticle>
         </el-drawer>
@@ -21,7 +21,6 @@ export default {
     data() {
         return {
             drawer: false,
-            showCreateArticle: false,
             context: ""
         };
     },
@@ -40,14 +39,23 @@ export default {
                 });
         },
         createArticle() {
-            this.showCreateArticle = true;
-            this.drawer = true;
+            if (this.context == "") {
+                this.$myNotify.warning("请先填写文章内容");
+                return false;
+            } else {
+                this.drawer = true;
+            }
         },
         closeDrawer(data) {
             this.drawer = data;
         },
         markdownContext(data) {
             this.context = data;
+        }
+    },
+    watch: {
+        context(n) {
+            console.log(n);
         }
     }
 };
