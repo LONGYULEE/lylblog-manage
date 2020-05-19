@@ -52,11 +52,6 @@ export default {
         markdownContext(data) {
             this.context = data;
         }
-    },
-    watch: {
-        context(n) {
-            console.log(n);
-        }
     }
 };
 </script>
