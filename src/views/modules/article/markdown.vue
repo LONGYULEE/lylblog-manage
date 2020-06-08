@@ -1,12 +1,13 @@
 <template>
     <div>
-        <mavon-editor v-model="context" ref="md" :toolbars="toolbars" @imgAdd="imgAdd" :style="contentStyleObj"
-            class="editor" />
+        <mavon-editor v-model="context" ref="md" @change="mavonChangeHandle" :toolbars="toolbars" @imgAdd="imgAdd"
+            :style="contentStyleObj" class="editor" />
     </div>
 </template>
 
 <script>
 import { getUpToken } from "@/api/article";
+import marked from 'marked';
 export default {
     data() {
         return {
@@ -18,6 +19,7 @@ export default {
                 height: ""
             },
             context: "", //输入的数据
+            html_context: "", //转化为html的数据
             toolbars: {
                 bold: true, // 粗体
                 italic: true, // 斜体
@@ -71,7 +73,7 @@ export default {
 
             xhr.send($file.miniurl.substring($file.miniurl.indexOf(",") + 1));
             //监听状态
-            xhr.onreadystatechange = function() {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
                     var result = xhr.responseText;
                     console.log("上传请求结果数据:" + result);
@@ -82,6 +84,10 @@ export default {
         },
         getHeight() {
             this.contentStyleObj.height = window.innerHeight - 185 + "px";
+        },
+        mavonChangeHandle(context, render) {
+            this.html_context = marked(context)
+            this.$emit("markdownHtmlContext", this.html_context);
         }
     },
     created() {

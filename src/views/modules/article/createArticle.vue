@@ -12,8 +12,7 @@
                         <el-input v-model="uploadFile.author"></el-input>
                     </el-form-item>
                     <el-form-item label="文章描述">
-                        <el-input v-model="uploadFile.description" type="textarea"
-                            :autosize="{ minRows: 2, maxRows: 3}">
+                        <el-input v-model="uploadFile.description" type="textarea" :autosize="{ minRows: 2, maxRows: 3}">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="文章标签">
@@ -60,7 +59,7 @@ import MyScrollBar from "../../common/myscrollbar";
 import UploadCover from "./uploadCover";
 import { treeDataTranslate } from "@/utils/util";
 export default {
-    props: { context: "" },
+    props: { context: "", htmlContext: "" },
     components: { MyScrollBar, UploadCover },
     name: "CreateArticle",
     data() {
@@ -114,7 +113,7 @@ export default {
                     that.$http({
                         url: `/admin/article/${
                             !that.uploadFile.id ? "save" : "update"
-                        }`,
+                            }`,
                         method: !that.uploadFile.id ? "post" : "put",
                         data: that.$http.adornData(that.uploadFile)
                     }).then(({ data }) => {
@@ -182,6 +181,8 @@ export default {
     mounted() {
         //获取父组件的值，有时候父组件还有一个父组件，需要多层的 $parent
         this.uploadFile.content = this.$parent.$parent.context;
+        console.log(this.$parent)
+        this.uploadFile.contentFormat = this.$parent.$parent.htmlContext;
     }
 };
 </script>
