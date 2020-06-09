@@ -1,27 +1,22 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item"
-                clearable />
+            <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" clearable />
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
                 搜索
             </el-button>
-            <el-button v-if="isAuth('sys:user:save')" class="filter-item" style="margin-left: 10px;" type="primary"
-                icon="el-icon-plus" @click="handleCreate">
+            <el-button v-if="isAuth('sys:user:save')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()">
                 添加
             </el-button>
-            <el-button v-if="isAuth('sys:user:update')" class="filter-item" style="margin-left: 10px;" type="primary"
-                icon="el-icon-edit" @click="handleEdit">
+            <el-button v-if="isAuth('sys:user:update')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleEdit">
                 修改
             </el-button>
-            <el-button v-if="isAuth('sys:user:delete')" class="filter-item" style="margin-left: 10px;" type="danger"
-                icon="el-icon-delete" @click="handleDelete">
+            <el-button v-if="isAuth('sys:user:delete')" class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-delete" @click="handleDelete">
                 删除
             </el-button>
         </div>
 
-        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row
-            style="width: 100%;">
+        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row style="width: 100%;">
             <el-table-column type="index" width="50">
             </el-table-column>
             <el-table-column type="selection" width="55" align="center"></el-table-column>
@@ -45,17 +40,20 @@
             </el-table-column>
         </el-table>
 
-        <pagination v-show="listQuery.total>0" :total="listQuery.total" :page.sync="listQuery.page"
-            :limit.sync="listQuery.size" @pagination="getDataList" />
+        <pagination v-show="listQuery.total>0" :total="listQuery.total" :page.sync="listQuery.page" :limit.sync="listQuery.size" @pagination="getDataList" />
+
+        <!-- 弹窗, 新增 / 修改 -->
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     </div>
 </template>
 
 <script>
 import { timeformat } from "@/utils/util";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
+import AddOrUpdate from './userAddOrUpdate'
 export default {
     name: "sys-user",
-    components: { Pagination },
+    components: { Pagination, AddOrUpdate },
     data() {
         return {
             dataList: [],
@@ -66,7 +64,8 @@ export default {
                 username: ""
             },
             listLoading: false,
-            tableKey: 0
+            tableKey: 0,
+            addOrUpdateVisible: false
         };
     },
     created() {
@@ -89,15 +88,22 @@ export default {
                 this.listLoading = false;
             });
         },
-        handleCreate() {},
-        handleEdit() {},
-        handleDelete() {},
+        handleCreate() { },
+        handleEdit() { },
+        handleDelete() { },
         dateformat(row) {
             return timeformat(row.createTime);
         },
         changeStatus(data) {
             return data === 1 ? true : false;
-        }
+        },
+        // 新增 / 修改
+        addOrUpdateHandle(id) {
+            this.addOrUpdateVisible = true
+            this.$nextTick(() => {
+                this.$refs.addOrUpdate.init(id)
+            })
+        },
     }
 };
 </script>
