@@ -1,99 +1,131 @@
 <template>
-    <div class="app-container">
-        <div class="filter-container">
-            <el-input v-model="listQuery.name" placeholder="分类名" style="width: 200px;" class="filter-item" clearable />
-            <el-select v-model="listQuery.importance" placeholder="类型" clearable style="width: 100px"
-                @change="getChange" class="filter-item">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-            </el-select>
-            <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
-                搜索
-            </el-button>
-            <el-button v-if="isAuth('operation:category:save')" class="filter-item" style="margin-left: 10px;"
-                type="primary" icon="el-icon-plus" @click="handleCreate">
-                添加
-            </el-button>
-            <el-button v-if="isAuth('operation:category:update')" class="filter-item" style="margin-left: 10px;"
-                type="primary" icon="el-icon-edit" @click="handleEdit">
-                修改
-            </el-button>
-            <el-button v-if="isAuth('operation:category:delete')" class="filter-item" style="margin-left: 10px;"
-                type="danger" icon="el-icon-delete" @click="handleDelete">
-                删除
-            </el-button>
-        </div>
-
-        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row
-            style="width: 100%;">
-            <el-table-column type="index" width="50">
-            </el-table-column>
-            <el-table-column type="selection" width="55" align="center"></el-table-column>
-            <el-table-column prop="name" label="分类名">
-            </el-table-column>
-            <el-table-column prop="parentName" label="父菜单名称">
-            </el-table-column>
-            <el-table-column prop="rank" label="级别">
-            </el-table-column>
-            <el-table-column label="分类类型">
+    <div class="mod-config">
+        <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+            <el-form-item>
+                <el-select v-model="dataForm.type" clearable>
+                    <el-option v-for="type in typeList" :key="type.parKey" :value="type.parKey" :label="type.parValue">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button @click="getDataList()">查询</el-button>
+                <el-button v-if="isAuth('operation:category:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+            </el-form-item>
+        </el-form>
+        <el-table :data="dataList" border v-loading="dataListLoading" style="width: 100%;">
+            <table-tree-column prop="name" header-align="center" width="150" label="名称">
+            </table-tree-column>
+            <el-table-column prop="type" header-align="center" align="center" label="类型">
                 <template slot-scope="scope">
-                    <el-tag>{{scope.row.type | changeType}}</el-tag>
+                    {{getSysParam('MODULE_TYPE',scope.row.type,typeList)}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="rank" header-align="center" align="center" label="级别">
+                <template slot-scope="scope">
+                    {{getSysParam('CATEGORY_RANK', scope.row.rank)}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="parentName" header-align="center" align="center" label="上级级别">
+            </el-table-column>
+            <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
+                <template slot-scope="scope">
+                    <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+                    <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-
+        <!-- 弹窗, 新增 / 修改 -->
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     </div>
 </template>
 
 <script>
-import { timeformat } from "@/utils/util";
-import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
+import AddOrUpdate from './categoryAddOrUpdate'
+import TableTreeColumn from '@/components/TableTreeColumn'
+import { treeDataTranslate } from '@/utils/util'
 export default {
-    name: "operation-category",
+    name: 'operation-category',
     data() {
         return {
-            dataList: [],
-            listLoading: false,
-            tableKey: 0,
-            listQuery: {
-                type: 0,
-                name: ""
+            dataForm: {
+                name: '',
+                type: ''
             },
-            options: [
-                { value: "0", label: "文章" },
-                { value: "1", label: "阅读" }
-            ]
-        };
+            dataList: [],
+            dataListLoading: false,
+            addOrUpdateVisible: false,
+            typeList: this.getSysParamArr('MODULE_TYPE')
+        }
     },
-    created() {
-        this.getDataList();
+    components: {
+        AddOrUpdate, TableTreeColumn
+    },
+    activated() {
+        this.getDataList()
     },
     methods: {
+        // 获取数据列表
         getDataList() {
-            this.listLoading = true;
+            this.dataListLoading = true
             this.$http({
-                url: "/admin/operation/category/list",
-                method: "get",
-                params: this.$http.adornParams(this.listQuery)
+                url: '/admin/operation/category/list',
+                method: 'get',
+                params: this.$http.adornParams({
+                    name: this.dataForm.name,
+                    type: this.dataForm.type
+                })
             }).then(({ data }) => {
-                if (data.code === 2000) {
-                    this.dataList = data.data;
+                if (data && data.code === 2000) {
+                    this.dataList = treeDataTranslate(data.data)
                 } else {
-                    this.$myNotify.error(data.message);
+                    this.dataList = []
                 }
-                this.listLoading = false;
-            });
+                this.dataListLoading = false
+            })
         },
-        handleCreate() {},
-        handleEdit() {},
-        handleDelete() {},
-        getChange(val) {
-            this.listQuery.type = val;
-        }
-    },
-    filters: {
-        changeType(data) {
-            return data == 0 ? "文章" : "阅读";
+        // 新增 / 修改
+        addOrUpdateHandle(id) {
+            this.addOrUpdateVisible = true
+            this.$nextTick(() => {
+                this.$refs.addOrUpdate.init(id)
+            })
+        },
+        // 删除
+        deleteHandle(id) {
+            this.$confirm(`确定对[id=${id}]进行删除操作?`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$http({
+                    url: '/admin/operation/category/delete/' + id,
+                    method: 'delete',
+                    data: this.$http.adornData()
+                }).then(({ data }) => {
+                    if (data && data.code === 2000) {
+                        this.$message({
+                            message: '操作成功',
+                            type: 'success',
+                            duration: 1500,
+                            onClose: () => {
+                                this.getDataList()
+                            }
+                        })
+                    } else {
+                        this.$message.error(data.message)
+                    }
+                })
+            })
         }
     }
-};
+}
 </script>
+
+<style scoped>
+.mod-config {
+    margin: 20px;
+}
+</style>

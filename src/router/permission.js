@@ -29,6 +29,7 @@ router.beforeEach((to, from, next) => {
         } else {
             if (store.getters.addRouters.length === 0) {
                 //如果动态添加路由为空，添加路由，等到渲染完成放行
+                //TODO: getInfo 改到 login 中
                 store
                     .dispatch('user/getInfo')
                     .then(() => {
