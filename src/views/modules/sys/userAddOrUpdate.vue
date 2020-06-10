@@ -15,7 +15,8 @@
             </el-form-item>
             <el-form-item label="角色" size="mini" prop="roleIdList">
                 <el-checkbox-group v-model="dataForm.roleIdList">
-                    <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
+                    <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}
+                    </el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
             <el-form-item label="状态" size="mini" prop="status">
@@ -105,11 +106,11 @@ export default {
         init(id) {
             this.dataForm.id = id || 0
             this.$http({
-                url: this.$http.adornUrl('/admin/sys/role/select'),
+                url: '/admin/sys/role/select',
                 method: 'get',
                 params: this.$http.adornParams()
             }).then(({ data }) => {
-                this.roleList = data && data.code === 200 ? data.list : []
+                this.roleList = data && data.code === 2000 ? data.data : []
             }).then(() => {
                 this.visible = true
                 this.$nextTick(() => {
@@ -118,16 +119,16 @@ export default {
             }).then(() => {
                 if (this.dataForm.id) {
                     this.$http({
-                        url: this.$http.adornUrl(`/admin/sys/user/info/${this.dataForm.id}`),
+                        url: `/admin/sys/user/info/${this.dataForm.id}`,
                         method: 'get',
                         params: this.$http.adornParams()
                     }).then(({ data }) => {
-                        if (data && data.code === 200) {
-                            this.dataForm.userName = data.user.username
-                            this.dataForm.salt = data.user.salt
-                            this.dataForm.email = data.user.email
-                            this.dataForm.roleIdList = data.user.roleIdList
-                            this.dataForm.status = data.user.status
+                        if (data && data.code === 2000) {
+                            this.dataForm.userName = data.data.username
+                            this.dataForm.salt = data.data.salt
+                            this.dataForm.email = data.data.email
+                            this.dataForm.roleIdList = data.data.roleIdList
+                            this.dataForm.status = data.data.status
                         }
                     })
                 }
@@ -138,7 +139,7 @@ export default {
             this.$refs['dataForm'].validate((valid) => {
                 if (valid) {
                     this.$http({
-                        url: this.$http.adornUrl(`/admin/sys/user/${!this.dataForm.id ? 'save' : 'update'}`),
+                        url: `/admin/sys/user/${!this.dataForm.id ? 'createUser' : 'updateUser'}`,
                         method: 'post',
                         data: this.$http.adornData({
                             'userId': this.dataForm.id || undefined,
@@ -151,7 +152,7 @@ export default {
                             'roleIdList': this.dataForm.roleIdList
                         })
                     }).then(({ data }) => {
-                        if (data && data.code === 200) {
+                        if (data && data.code === 2000) {
                             this.$message({
                                 message: '操作成功',
                                 type: 'success',
