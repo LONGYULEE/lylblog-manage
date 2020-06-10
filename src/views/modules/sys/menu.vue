@@ -5,18 +5,16 @@
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
                 搜索
             </el-button>
-            <el-button v-if="isAuth('sys:menu:save')" class="filter-item" style="margin-left: 10px;" type="primary"
-                icon="el-icon-plus" @click="addOrUpdateHandle()">
+            <el-button v-if="isAuth('sys:menu:save')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()">
                 添加
             </el-button>
         </div>
 
-        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row style="width: 100%;"
-            :height="height">
+        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row style="width: 100%;" :height="height">
             <el-table-column type="index" width="50">
             </el-table-column>
-            <el-table-column prop="name" label="菜单" width="120">
-            </el-table-column>
+            <table-tree-column prop="name" header-align="center" treeKey="menuId" width="150" label="名称">
+            </table-tree-column>
             <el-table-column prop="parentName" label="父级" width="180">
             </el-table-column>
             <el-table-column prop="url" label="url">
@@ -37,8 +35,7 @@
             </el-table-column>
             <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
                 <template slot-scope="scope">
-                    <el-button v-if="isAuth('sys:menu:update')" type="text" size="small"
-                        @click="addOrUpdateHandle(scope.row.menuId)">修改</el-button>
+                    <el-button v-if="isAuth('sys:menu:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.menuId)">修改</el-button>
                     <el-button v-if="isAuth('sys:menu:delete')" type="text" size="small" @click="deleteHandle(scope.row.menuId)">
                         删除</el-button>
                 </template>
@@ -52,9 +49,11 @@
 <script>
 import { timeformat } from "@/utils/util";
 import AddOrUpdate from "./menuAddOrUpdate";
+import TableTreeColumn from '@/components/TableTreeColumn'
+import { treeDataTranslate } from '@/utils/util'
 export default {
     name: "sys-menu",
-    components: { AddOrUpdate },
+    components: { AddOrUpdate, TableTreeColumn },
     data() {
         return {
             dataList: [],
@@ -74,7 +73,7 @@ export default {
             this.listLoading = true;
             this.$http.get("/admin/sys/menu/list").then(({ data }) => {
                 if (data.code === 2000) {
-                    this.dataList = data.data;
+                    this.dataList = treeDataTranslate(data.data, 'menuId')
                 } else {
                     this.$myNotify.error(data.message);
                 }
