@@ -38,6 +38,7 @@ export function treeDataTranslate(data, id = 'id', pid = 'parentId') {
     for (var i = 0; i < data.length; i++) {
         temp[data[i][id]] = data[i];
     }
+
     for (var k = 0; k < data.length; k++) {
         if (temp[data[k][pid]] && data[k][id] !== data[k][pid]) {
             if (!temp[data[k][pid]]['children']) {
