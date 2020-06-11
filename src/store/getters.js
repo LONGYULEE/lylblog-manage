@@ -11,5 +11,6 @@ const getters = {
     roles: state => state.user.roles,
     permission_routes: state => state.menu.routes,
     addRouters: state => state.menu.addRouters,
-}
-export default getters
+    tableWidth: state => state.app.tableWidth
+};
+export default getters;
