@@ -105,11 +105,11 @@ export default {
                 type: 'warning'
             }).then(() => {
                 this.$http({
-                    url: this.$http.adornUrl('/admin/operation/recommend/delete'),
+                    url: '/admin/operation/recommend/delete',
                     method: 'delete',
                     data: this.$http.adornData(ids, false)
                 }).then(({ data }) => {
-                    if (data && data.code === 200) {
+                    if (data && data.code === 2000) {
                         this.$message({
                             message: '操作成功',
                             type: 'success',
@@ -119,7 +119,7 @@ export default {
                             }
                         })
                     } else {
-                        this.$message.error(data.msg)
+                        this.$message.error(data.message)
                     }
                 })
             })

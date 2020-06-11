@@ -3,20 +3,27 @@
         <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
             label-width="120px">
             <el-form-item>
-                <el-popover v-model="recommendListShow" placement="right" width="500" trigger="click">
+                <el-popover :inline="true" v-model="recommendListShow" placement="right" width="500" trigger="click">
                     <el-form :inline="true" @keyup.enter.native="listRecommend()">
-                        <el-form-item>
-                            <el-select v-model="listParams.type">
-                                <el-option v-for="type in typeList" :key="type.parKey" :value="type.parKey"
-                                    :label="type.parValue"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-input v-model="listParams.name" placeholder="文章标题" clearable></el-input>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button @click="listRecommend()">查询</el-button>
-                        </el-form-item>
+                        <el-col :span="9">
+
+                            <el-form-item>
+                                <el-select v-model="listParams.type">
+                                    <el-option v-for="type in typeList" :key="type.parKey" :value="type.parKey"
+                                        :label="type.parValue"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="10">
+                            <el-form-item>
+                                <el-input v-model="listParams.name" placeholder="文章标题" clearable></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="5">
+                            <el-form-item>
+                                <el-button @click="listRecommend()" type="primary" icon="el-icon-search">查询</el-button>
+                            </el-form-item>
+                        </el-col>
                     </el-form>
                     <el-table :data="recommendList" style="height: 500px;overflow: auto">
                         <el-table-column property="title" label="文章标题"></el-table-column>
@@ -32,7 +39,7 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <el-button slot="reference" @click="listRecommend()">请选择推荐文章</el-button>
+                    <el-button slot="reference">请选择推荐文章</el-button>
                 </el-popover>
             </el-form-item>
             <el-form-item label="推荐文章">
@@ -119,14 +126,13 @@ export default {
             })
         },
         listRecommend() {
-            recommendListShow = true;
+            this.recommendListShow = true;
             this.$http({
                 url: `/admin/operation/recommend/select`,
                 method: 'get',
                 params: this.$http.adornParams(this.listParams)
             }).then(({ data }) => {
                 if (data && data.code === 2000) {
-                    debugger
                     this.recommendList = data.data
                 }
             })
