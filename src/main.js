@@ -22,6 +22,7 @@ import '@/styles/index.scss'; // 全局样式
 import './icons'; // icon
 import { getSysParam } from '@/utils/util';
 import { getSysParamArr } from '@/utils/util';
+import '@/assets/css/reset.css';
 
 Vue.use(Element);
 Vue.use(mavonEditor);

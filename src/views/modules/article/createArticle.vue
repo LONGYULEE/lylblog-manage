@@ -12,7 +12,8 @@
                         <el-input v-model="uploadFile.author"></el-input>
                     </el-form-item>
                     <el-form-item label="文章描述">
-                        <el-input v-model="uploadFile.description" type="textarea" :autosize="{ minRows: 2, maxRows: 3}">
+                        <el-input v-model="uploadFile.description" type="textarea"
+                            :autosize="{ minRows: 2, maxRows: 3}">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="文章标签">
@@ -55,12 +56,11 @@
 </template>
 
 <script>
-import MyScrollBar from "../../common/myscrollbar";
 import UploadCover from "./uploadCover";
 import { treeDataTranslate } from "@/utils/util";
 export default {
     props: { context: "", htmlContext: "" },
-    components: { MyScrollBar, UploadCover },
+    components: { UploadCover },
     name: "CreateArticle",
     data() {
         return {
