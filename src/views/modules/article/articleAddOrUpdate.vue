@@ -39,13 +39,15 @@
             </el-form-item>
             <el-form-item label="展示类型">
                 <el-radio-group v-model="article.coverType">
-                    <el-radio v-for="type in coverTypeList" :key="type.parKey" :label="type.parKey">{{type.parValue}}</el-radio>
+                    <el-radio v-for="type in coverTypeList" :key="type.parKey" :label="type.parKey">{{type.parValue}}
+                    </el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="上传封面">
                 <el-col :span="12">
-                    <el-upload drag :action="url" list-type="picture" :multiple="false" :before-upload="beforeUploadHandle"
-                        :file-list="file" :on-remove="handleRemove" :on-success="successHandle">
+                    <el-upload drag :action="url" list-type="picture" :multiple="false"
+                        :before-upload="beforeUploadHandle" :file-list="file" :on-remove="handleRemove"
+                        :on-success="successHandle">
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！</div>
@@ -58,7 +60,8 @@
                 </el-col>
             </el-form-item>
             <el-form-item label="博文内容">
-                <mavon-editor ref=md v-model="article.content" @imgAdd="imgAdd" @change="mavonChangeHandle"></mavon-editor>
+                <mavon-editor style="z-index: inherit" ref=md v-model="article.content" @imgAdd="imgAdd"
+                    @change="mavonChangeHandle"></mavon-editor>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="saveArticle()">保存</el-button>
@@ -138,7 +141,7 @@ export default {
                     }).then(({ data }) => {
                         if (data && data.code === 2000) {
                             this.article = data.data
-                            this.file = [{ url: data.article.cover }]
+                            this.file = [{ url: data.data.cover }]
                             // 转换tagList
                             this.tagListSelect = this.article.tagList.map(tag => {
                                 return tag.id
