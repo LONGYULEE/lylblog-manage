@@ -32,7 +32,6 @@ const mutations = {
     },
     TOGGLE_DEVICE: (state, device) => {
         state.device = device;
-        console.log('123');
     },
     SET_SIZE: (state, size) => {
         state.size = size;
