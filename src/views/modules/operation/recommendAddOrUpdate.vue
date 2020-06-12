@@ -21,7 +21,7 @@
                         </el-col>
                         <el-col :span="5">
                             <el-form-item>
-                                <el-button @click="listRecommend()" type="primary" icon="el-icon-search">查询</el-button>
+                                <el-button @click="listRecommend()" type="primary" icon="el-icon-search">搜索</el-button>
                             </el-form-item>
                         </el-col>
                     </el-form>

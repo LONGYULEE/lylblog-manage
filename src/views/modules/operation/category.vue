@@ -11,8 +11,10 @@
                 <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button @click="getDataList()">查询</el-button>
-                <el-button v-if="isAuth('operation:category:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+                <el-button @click="getDataList()" type="primary" icon="el-icon-search">搜索</el-button>
+                <el-button v-if="isAuth('operation:category:save')" icon="el-icon-plus" type="success"
+                    @click="addOrUpdateHandle()">添加
+                </el-button>
             </el-form-item>
         </el-form>
         <el-table :data="dataList" border v-loading="dataListLoading" style="width: 100%;">

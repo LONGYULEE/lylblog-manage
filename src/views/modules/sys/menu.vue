@@ -5,7 +5,7 @@
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
                 搜索
             </el-button>
-            <el-button v-if="isAuth('sys:menu:save')" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()">
+            <el-button v-if="isAuth('sys:menu:save')" class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="addOrUpdateHandle()">
                 添加
             </el-button>
         </div>

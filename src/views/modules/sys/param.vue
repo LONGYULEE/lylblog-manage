@@ -8,8 +8,8 @@
                     </div>
                     <div>
                         <el-tree :data="menuList" :props="menuListTreeProps" node-key="menuId" ref="menuListTree"
-                            @current-change="menuListTreeCurrentChangeHandle" :default-expand-all="true" :highlight-current="true"
-                            :expand-on-click-node="false">
+                            @current-change="menuListTreeCurrentChangeHandle" :default-expand-all="true"
+                            :highlight-current="true" :expand-on-click-node="false">
                         </el-tree>
                     </div>
                 </el-card>
@@ -25,16 +25,16 @@
                                 <el-input v-model="dataForm.type" placeholder="类型" clearable></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-button @click="getDataList()" icon="el-icon-search" type="primary">查询</el-button>
-                                <el-button v-if="isAuth('sys:param:save')" type="primary" icon="el-icon-plus"
+                                <el-button @click="getDataList()" icon="el-icon-search" type="primary">搜索</el-button>
+                                <el-button v-if="isAuth('sys:param:save')" type="success" icon="el-icon-plus"
                                     @click="addOrUpdateHandle()">
-                                    新增</el-button>
+                                    添加</el-button>
                                 <el-button v-if="isAuth('sys:param:delete')" type="danger" @click="deleteHandle()"
-                                    :disabled="dataListSelections.length <= 0">批量删除</el-button>
+                                    :disabled="dataListSelections.length <= 0" icon="el-icon-delete">批量删除</el-button>
                             </el-form-item>
                         </el-form>
-                        <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle"
-                            style="width: 100%;">
+                        <el-table :data="dataList" border v-loading="dataListLoading"
+                            @selection-change="selectionChangeHandle" style="width: 100%;">
                             <el-table-column type="selection" header-align="center" align="center" width="50">
                             </el-table-column>
                             <el-table-column prop="parKey" header-align="center" align="center" label="参数键">
@@ -55,8 +55,8 @@
                             </el-table-column>
                         </el-table>
                         <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle"
-                            :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage"
-                            layout="total, sizes, prev, pager, next, jumper">
+                            :current-page="pageIndex" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize"
+                            :total="totalPage" layout="total, sizes, prev, pager, next, jumper">
                         </el-pagination>
                     </div>
                 </el-card>

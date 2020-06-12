@@ -5,13 +5,13 @@
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
                 搜索
             </el-button>
-            <el-button v-if="isAuth('operation:tag:save')" class="filter-item" style="margin-left: 10px;" type="primary"
+            <el-button v-if="isAuth('operation:tag:save')" class="filter-item" style="margin-left: 10px;" type="success"
                 icon="el-icon-plus" @click="addOrUpdateHandle()">
                 添加
             </el-button>
             <el-button v-if="isAuth('operation:tag:delete')" class="filter-item" style="margin-left: 10px;"
                 :disabled="dataListSelections.length <= 0" type="danger" icon="el-icon-delete" @click="deleteHandle()">
-                删除
+                批量删除
             </el-button>
         </div>
 

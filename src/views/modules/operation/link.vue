@@ -6,7 +6,7 @@
                 搜索
             </el-button>
             <el-button v-if="isAuth('operation:link:save')" class="filter-item" style="margin-left: 10px;"
-                type="primary" icon="el-icon-plus" @click="handleCreate">
+                type="success" icon="el-icon-plus" @click="handleCreate">
                 添加
             </el-button>
             <el-button v-if="isAuth('operation:link:update')" class="filter-item" style="margin-left: 10px;"

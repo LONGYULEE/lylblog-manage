@@ -1,20 +1,21 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-input v-model="listQuery.roleName" placeholder="角色名" style="width: 200px;" class="filter-item" clearable />
+            <el-input v-model="listQuery.roleName" placeholder="角色名" style="width: 200px;" class="filter-item"
+                clearable />
             <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
                 搜索
             </el-button>
-            <el-button v-if="isAuth('sys:role:save')" class="filter-item" style="margin-left: 10px;" type="primary"
+            <el-button v-if="isAuth('sys:role:save')" class="filter-item" style="margin-left: 10px;" type="success"
                 icon="el-icon-plus" @click="addOrUpdateHandle()">
                 添加
             </el-button>
             <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" class="filter-item"
-                :disabled="dataListSelections.length <= 0">批量删除</el-button>
+                :disabled="dataListSelections.length <= 0" icon="el-icon-delete">批量删除</el-button>
         </div>
 
-        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" @selection-change="selectionChangeHandle" border fit
-            highlight-current-row style="width: 100%;">
+        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" @selection-change="selectionChangeHandle"
+            border fit highlight-current-row style="width: 100%;">
             <el-table-column type="index" width="50">
             </el-table-column>
             <el-table-column type="selection" width="55" align="center"></el-table-column>
@@ -28,14 +29,15 @@
                 <template slot-scope="scope">
                     <el-button v-if="isAuth('sys:role:update')" type="text" size="small"
                         @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-                    <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">
+                    <el-button v-if="isAuth('sys:role:delete')" type="text" size="small"
+                        @click="deleteHandle(scope.row.roleId)">
                         删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <pagination v-show="listQuery.total>0" :total="listQuery.total" :page.sync="listQuery.page" :limit.sync="listQuery.size"
-            @pagination="getDataList" />
+        <pagination v-show="listQuery.total>0" :total="listQuery.total" :page.sync="listQuery.page"
+            :limit.sync="listQuery.size" @pagination="getDataList" />
         <!-- 弹窗, 新增 / 修改 -->
         <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     </div>
