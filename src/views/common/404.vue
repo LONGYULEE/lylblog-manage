@@ -31,6 +31,12 @@ export default {
     },
     methods: {
         backToHome() {
+            // 关闭当前标签
+            this.$store
+                .dispatch("tagsView/delView", this.$route)
+                .then(e => {
+                    // console.log(e);
+                });
             this.$router.replace({ name: "home" });
         }
     }

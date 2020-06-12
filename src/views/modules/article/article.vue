@@ -117,7 +117,11 @@ export default {
         },
         updatePublish() { },
         addOrUpdateHandle(id) {
-            this.$router.push({ path: 'article/article/update/' + id })
+            if (id) {
+                this.$router.push({ path: 'article/article/update/' + id })
+            } else {
+                this.$router.push({ path: 'article-articleAddOrUpdate' })
+            }
         },
         selectionChangeHandle(val) { this.dataListSelections = val },
         dateformat(row) {

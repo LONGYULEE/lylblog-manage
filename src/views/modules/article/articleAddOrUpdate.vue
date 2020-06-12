@@ -193,33 +193,34 @@ export default {
         },
         // 保存文章
         saveArticle() {
-            this.$refs['articleForm'].validate((valid) => {
-                if (valid) {
-                    // 转化categoryId
-                    this.article.categoryId = this.categoryOptionsSelect.join(',')
-                    this.$http({
-                        url: `/admin/article/${!this.article.id ? 'save' : 'update'}`,
-                        method: !this.article.id ? 'post' : 'put',
-                        data: this.$http.adornData(this.article)
-                    }).then(({ data }) => {
-                        if (data && data.code === 2000) {
-                            this.$message.success('保存博文成功')
-                            // 关闭当前标签
-                            this.$store
-                                .dispatch("tagsView/delView", this.$route)
-                                .then(e => {
-                                    console.log(e);
-                                });
-                            // 跳转到 articleList
-                            this.$router.push("/article-article");
-                        } else {
-                            this.$message.error(data.msg)
-                        }
-                    })
-                } else {
-                    return false
-                }
-            })
+            console.log(this.article.contentFormat)
+            // this.$refs['articleForm'].validate((valid) => {
+            //     if (valid) {
+            //         // 转化categoryId
+            //         this.article.categoryId = this.categoryOptionsSelect.join(',')
+            //         this.$http({
+            //             url: `/admin/article/${!this.article.id ? 'save' : 'update'}`,
+            //             method: !this.article.id ? 'post' : 'put',
+            //             data: this.$http.adornData(this.article)
+            //         }).then(({ data }) => {
+            //             if (data && data.code === 2000) {
+            //                 this.$message.success('保存博文成功')
+            //                 // 关闭当前标签
+            //                 this.$store
+            //                     .dispatch("tagsView/delView", this.$route)
+            //                     .then(e => {
+            //                         console.log(e);
+            //                     });
+            //                 // 跳转到 articleList
+            //                 this.$router.push("/article-article");
+            //             } else {
+            //                 this.$message.error(data.msg)
+            //             }
+            //         })
+            //     } else {
+            //         return false
+            //     }
+            // })
         },
         // 文章内容图片上传
         imgAdd(pos, $file) {
