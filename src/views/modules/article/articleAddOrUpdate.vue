@@ -45,7 +45,7 @@
             </el-form-item>
             <el-form-item label="上传封面">
                 <el-col :span="12">
-                    <el-upload drag :action="url" list-type="picture" :multiple="false"
+                    <el-upload drag :action="upload_url" list-type="picture" :multiple="false"
                         :before-upload="beforeUploadHandle" :file-list="file" :on-remove="handleRemove"
                         :on-success="successHandle">
                         <i class="el-icon-upload"></i>
@@ -60,8 +60,9 @@
                 </el-col>
             </el-form-item>
             <el-form-item label="博文内容">
-                <mavon-editor style="z-index: inherit" ref=md v-model="article.content" @imgAdd="imgAdd"
-                    @change="mavonChangeHandle"></mavon-editor>
+                <mavon-editor style="height:700px" ref=md v-model="article.content" @imgAdd="imgAdd"
+                    @change="mavonChangeHandle">
+                </mavon-editor>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="saveArticle()">保存</el-button>
@@ -75,7 +76,7 @@
 import MavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import { treeDataTranslate } from '@/utils/util'
-import marked from 'marked'
+import { getUpToken, deleteFile } from "@/api/article";
 export default {
     components: {
         'mavon-editor': MavonEditor.mavonEditor
@@ -103,7 +104,12 @@ export default {
                 label: 'name',
                 children: 'children',
                 value: 'id'
-            }
+            },
+            qiniuData: {
+                key: "",
+                token: ""
+            },
+            upload_url: "http://upload-z2.qiniup.com",
         }
     },
     created() {
@@ -131,7 +137,6 @@ export default {
                     }
                 })
             }).then(() => {
-                this.url = `/admin/oss/resource/upload`
                 let id = this.$route.params.id
                 if (id) {
                     this.$http({
@@ -151,6 +156,17 @@ export default {
                         }
                     })
                 }
+            }).then(() => {
+                this.$http({
+                    url: '/admin/article/getUpToken',
+                    method: 'get'
+                }).then(({ data }) => {
+                    if (data.code === 2000) {
+                        this.qiniuData.token = data.data;
+                    } else {
+                        this.$myNotify.error(data.data.message);
+                    }
+                });
             })
         },
         // 过滤标签
@@ -237,7 +253,6 @@ export default {
         },
         mavonChangeHandle(context, render) {
             this.article.contentFormat = render
-            console.log(render)
         }
     }
 }
