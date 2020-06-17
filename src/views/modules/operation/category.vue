@@ -12,7 +12,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button @click="getDataList()" type="primary" icon="el-icon-search">搜索</el-button>
-                <el-button v-if="isAuth('operation:category:save')" icon="el-icon-plus" type="success"
+                <el-button v-if="isAuth('operation:category:save')" icon="el-icon-plus" type="warning"
                     @click="addOrUpdateHandle()">添加
                 </el-button>
             </el-form-item>

@@ -17,13 +17,13 @@ module.exports = {
      * @type {boolean} true | false
      * @description Whether fix the header
      */
-    fixedHeader: true,
+    fixedHeader: false,
 
     /**
      * @type {boolean} true | false
      * @description Whether show the logo in sidebar
      */
-    sidebarLogo: true,
+    sidebarLogo: false,
 
     /**
      * @type {string | array} 'production' | ['production', 'development']
@@ -32,4 +32,4 @@ module.exports = {
      * If you want to also use it in dev, you can pass ['production', 'development']
      */
     errorLog: 'production'
-}
+};
