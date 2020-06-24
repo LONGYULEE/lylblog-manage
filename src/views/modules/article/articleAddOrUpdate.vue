@@ -1,74 +1,80 @@
   <template>
     <div class="article-wrapper">
-        <el-form :model="article" label-width="80px" :rules="rules" ref="articleForm">
-            <el-form-item label="博文标题" prop="title">
-                <el-col :span="12">
-                    <el-input placeholder="博文标题" v-model="article.title" clearable></el-input>
-                </el-col>
-            </el-form-item>
-            <el-row>
-                <el-col :span="6">
-                    <el-form-item label="博文分类">
+
+        <mavon-editor style="height:calc(100vh - 180px)" ref=md v-model="article.content" @imgAdd="imgAdd"
+            @change="mavonChangeHandle">
+        </mavon-editor>
+        <div class="buttonDiv">
+            <el-button type="primary" @click="insertArticleInfo()">填写文章信息</el-button>
+        </div>
+        <el-dialog title="文章信息" :visible.sync="dialogVisible" :close-on-click-modal="false">
+            <el-form :model="article" label-width="150px" :rules="rules" ref="articleForm"
+                style="height:500px;overflow-y:auto">
+                <el-form-item label="博文标题" prop="title">
+                    <el-col :span="20">
+                        <el-input placeholder="博文标题" v-model="article.title" clearable></el-input>
+                    </el-col>
+                </el-form-item>
+
+                <el-form-item label="博文分类">
+                    <el-col :span="20">
                         <el-cascader style="width: 100%;" clearable change-on-select :options="categoryOptions"
                             v-model="categoryOptionsSelect" :props="categoryListTreeProps">
                         </el-cascader>
-                    </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                    <el-form-item label="博文标签">
+                    </el-col>
+                </el-form-item>
+
+                <el-form-item label="博文标签">
+                    <el-col :span="20">
                         <el-select style="width: 100%" v-model="tagListSelect" multiple allow-create filterable
                             default-first-option placeholder="请选择文章标签" @change="filterTagList">
                             <el-option v-for="item in tagList" :key="item.id" :label="item.name" :value="item.id">
                             </el-option>
                         </el-select>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-form-item label="博文作者">
-                <el-row>
-                    <el-col :span="4">
-                        <el-input placeholder="博文作者" v-model="article.author" clearable></el-input>
                     </el-col>
-                </el-row>
-            </el-form-item>
-            <el-form-item label="是否推荐">
-                <el-radio-group v-model="article.recommend">
-                    <el-radio :label="true">是</el-radio>
-                    <el-radio :label="false">否</el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="展示类型">
-                <el-radio-group v-model="article.coverType">
-                    <el-radio v-for="type in coverTypeList" :key="type.parKey" :label="type.parKey">{{type.parValue}}
-                    </el-radio>
-                </el-radio-group>
-            </el-form-item>
-            <el-form-item label="上传封面">
-                <el-col :span="12">
-                    <el-upload drag :action="upload_url" list-type="picture" :multiple="false"
-                        :before-upload="beforeUploadHandle" :file-list="fileList" :on-remove="handleRemove"
-                        :on-success="successHandle" :data="qiniuData">
-                        <i class="el-icon-upload"></i>
-                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！</div>
-                    </el-upload>
-                </el-col>
-            </el-form-item>
-            <el-form-item label="博文描述">
-                <el-col :span="12">
-                    <el-input type="textarea" v-model="article.description" placeholder="博文描述" clearable></el-input>
-                </el-col>
-            </el-form-item>
-            <el-form-item label="博文内容">
-                <mavon-editor style="height:700px" ref=md v-model="article.content" @imgAdd="imgAdd"
-                    @change="mavonChangeHandle">
-                </mavon-editor>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="saveArticle()">保存</el-button>
-                <el-button>重置</el-button>
-            </el-form-item>
-        </el-form>
+                </el-form-item>
+                <el-form-item label="博文作者">
+                    <el-row>
+                        <el-col :span="20">
+                            <el-input placeholder="博文作者" v-model="article.author" clearable></el-input>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+                <el-form-item label="是否推荐">
+                    <el-radio-group v-model="article.recommend">
+                        <el-radio :label="true">是</el-radio>
+                        <el-radio :label="false">否</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="展示类型">
+                    <el-radio-group v-model="article.coverType">
+                        <el-radio v-for="type in coverTypeList" :key="type.parKey" :label="type.parKey">
+                            {{type.parValue}}
+                        </el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="上传封面">
+                    <el-col :span="20">
+                        <el-upload drag :action="upload_url" list-type="picture" :multiple="false"
+                            :before-upload="beforeUploadHandle" :file-list="fileList" :on-remove="handleRemove"
+                            :on-success="successHandle" :data="qiniuData">
+                            <i class="el-icon-upload"></i>
+                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                            <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！</div>
+                        </el-upload>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="博文描述">
+                    <el-col :span="20">
+                        <el-input type="textarea" v-model="article.description" placeholder="博文描述" clearable></el-input>
+                    </el-col>
+                </el-form-item>
+            </el-form>
+            <div slot="footer">
+                <el-button @click="cancel()">取消</el-button>
+                <el-button type="primary" @click="saveArticle()">确认</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -113,6 +119,7 @@ export default {
             domain: "http://img.lylblog.xyz",
             //base64
             uploadUrl: "http://up-z2.qiniup.com/putb64/-1",
+            dialogVisible: false
         }
     },
     created() {
@@ -201,10 +208,11 @@ export default {
         },
         // 上传成功
         successHandle(response) {
-            if (response && response.code === 200) {
-                this.article.cover = response.resource.url
-                this.file = [response.resource]
-                this.$message.success('上传成功！')
+            console.log(response)
+            if (response && response.code === "2000") {
+                this.article.cover = this.domain + '/' + response.key;
+                // this.file = [response.resource]
+                this.$myNotify.success("上传成功！");
             }
         },
         // 移除上传文件
@@ -222,6 +230,10 @@ export default {
                     }
                 });
         },
+        insertArticleInfo() {
+            this.dialogVisible = true;
+        },
+        cancel() { this.dialogVisible = false; },
         // 保存文章
         saveArticle() {
             this.$refs['articleForm'].validate((valid) => {
@@ -286,5 +298,11 @@ export default {
 <style scoped>
 .article-wrapper {
     margin: 10px;
+}
+
+.buttonDiv {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 </style>

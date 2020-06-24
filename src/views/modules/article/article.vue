@@ -28,7 +28,8 @@
             <el-table-column prop="tagList" header-align="center" align="center" label="标签" min-width="80">
                 <template slot-scope="scope">
                     <el-row>
-                        <el-button v-for="tag in scope.row.tagList" :key="tag.id" size="mini">{{tag.name}}</el-button>
+                        <el-button v-for="tag in scope.row.tagList" :key="tag.id" size="mini"
+                            style="display:inline-block">{{tag.name}}</el-button>
                     </el-row>
                 </template>
             </el-table-column>
