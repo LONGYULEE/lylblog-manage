@@ -40,11 +40,11 @@
 import { getUUID } from "@/utils/util";
 import { setToken } from "@/utils/auth";
 export default {
-    data: function() {
+    data: function () {
         return {
             param: {
-                username: "admin",
-                password: "admin",
+                username: "",
+                password: "",
                 captcha: "",
                 uuid: ""
             },
@@ -134,7 +134,7 @@ export default {
     overflow: hidden;
 }
 .ms-login::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     bottom: 0;

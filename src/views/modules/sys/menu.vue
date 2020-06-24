@@ -1,16 +1,14 @@
 <template>
     <div class="app-container">
         <div class="filter-container">
-            <el-input placeholder="角色名" style="width: 200px;" class="filter-item" clearable />
-            <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getDataList">
-                搜索
-            </el-button>
-            <el-button v-if="isAuth('sys:menu:save')" class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-plus" @click="addOrUpdateHandle()">
+            <el-button v-if="isAuth('sys:menu:save')" class="filter-item" style="margin-left: 10px;" type="success"
+                icon="el-icon-plus" @click="addOrUpdateHandle()">
                 添加
             </el-button>
         </div>
 
-        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row style="width: 100%;" :height="height">
+        <el-table :key="tableKey" v-loading="listLoading" :data="dataList" border fit highlight-current-row
+            style="width: 100%;" :height="height">
             <el-table-column type="index" width="50">
             </el-table-column>
             <table-tree-column prop="name" header-align="center" treeKey="menuId" width="150" label="名称">
@@ -35,8 +33,10 @@
             </el-table-column>
             <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
                 <template slot-scope="scope">
-                    <el-button v-if="isAuth('sys:menu:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.menuId)">修改</el-button>
-                    <el-button v-if="isAuth('sys:menu:delete')" type="text" size="small" @click="deleteHandle(scope.row.menuId)">
+                    <el-button v-if="isAuth('sys:menu:update')" type="text" size="small"
+                        @click="addOrUpdateHandle(scope.row.menuId)">修改</el-button>
+                    <el-button v-if="isAuth('sys:menu:delete')" type="text" size="small"
+                        @click="deleteHandle(scope.row.menuId)">
                         删除</el-button>
                 </template>
             </el-table-column>
