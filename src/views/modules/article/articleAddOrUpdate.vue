@@ -46,8 +46,8 @@
             <el-form-item label="上传封面">
                 <el-col :span="12">
                     <el-upload drag :action="upload_url" list-type="picture" :multiple="false"
-                        :before-upload="beforeUploadHandle" :file-list="file" :on-remove="handleRemove"
-                        :on-success="successHandle">
+                        :before-upload="beforeUploadHandle" :file-list="fileList" :on-remove="handleRemove"
+                        :on-success="successHandle" :data="qiniuData">
                         <i class="el-icon-upload"></i>
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！</div>
@@ -91,7 +91,7 @@ export default {
             },
             coverTypeList: this.getSysParamArr('ARTICLE_COVER_TYPE'),
             url: '',
-            file: [],
+            fileList: [],
             rules: {
                 title: { required: true, message: '请输入博文标题', trigger: 'change' }
             },
@@ -110,6 +110,9 @@ export default {
                 token: ""
             },
             upload_url: "http://upload-z2.qiniup.com",
+            domain: "http://img.lylblog.xyz",
+            //base64
+            uploadUrl: "http://up-z2.qiniup.com/putb64/-1",
         }
     },
     created() {
@@ -164,7 +167,7 @@ export default {
                     if (data.code === 2000) {
                         this.qiniuData.token = data.data;
                     } else {
-                        this.$myNotify.error(data.data.message);
+                        this.$myNotify.error(data.message);
                     }
                 });
             })
@@ -191,7 +194,9 @@ export default {
         beforeUploadHandle(file) {
             if (file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
                 this.$message.error('只支持jpg、png、gif格式的图片！')
-                return false
+                return false;
+            } else {
+                this.qiniuData.key = file.name;
             }
         },
         // 上传成功
@@ -203,9 +208,19 @@ export default {
             }
         },
         // 移除上传文件
-        handleRemove(file, fileList) {
-            this.file = []
-            this.article.cover = ''
+        handleRemove(file) {
+            //删除七牛云文件
+            this.$http
+                .get("/admin/article/deleteFile?key=" + file.response.key)
+                .then(({ data }) => {
+                    if (data.data) {
+                        this.$myNotify.success("删除成功");
+                        this.fileList = [];
+                        this.article.cover = '';
+                    } else {
+                        this.$myNotify.error(data.data.message);
+                    }
+                });
         },
         // 保存文章
         saveArticle() {
@@ -239,17 +254,27 @@ export default {
         },
         // 文章内容图片上传
         imgAdd(pos, $file) {
-            // 第一步.将图片上传到服务器.
-            let formData = new FormData()
-            formData.append('file', $file)
-            this.$http({
-                url: this.url,
-                method: 'post',
-                data: formData,
-                headers: { 'Content-Type': 'multipart/form-data' }
-            }).then(({ data }) => {
-                this.$refs.md.$img2Url(pos, data.resource.url)
-            })
+            let that = this;
+            // 缓存图片信息
+            var formdata = new FormData();
+            formdata.append("image", $file);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", this.uploadUrl, true);
+            //文本类型
+            xhr.setRequestHeader("Content-Type", "application/octet-stream");
+            //七牛认证信息 注意空格
+            xhr.setRequestHeader("Authorization", "UpToken " + this.qiniuData.token);
+
+            xhr.send($file.miniurl.substring($file.miniurl.indexOf(",") + 1));
+            //监听状态
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    var result = xhr.responseText;
+                    // console.log("上传请求结果数据:" + result);
+                    result = JSON.parse(result);
+                    that.$refs.md.$img2Url(pos, that.domain + "/" + result.key);
+                }
+            };
         },
         mavonChangeHandle(context, render) {
             this.article.contentFormat = render
