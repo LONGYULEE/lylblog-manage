@@ -156,13 +156,17 @@ export default {
                     }).then(({ data }) => {
                         if (data && data.code === 2000) {
                             this.article = data.data
-                            this.file = [{ url: data.data.cover }]
+                            if (data.data.cover) {
+                                this.fileList = [{ url: data.data.cover }]
+                            }
                             // 转换tagList
                             this.tagListSelect = this.article.tagList.map(tag => {
                                 return tag.id
                             })
-                            // 转换categoryId
-                            this.categoryOptionsSelect = this.article.categoryId.split(',').map((data) => { return +data })
+                            if (this.article.categoryId) {
+                                // 转换categoryId
+                                this.categoryOptionsSelect = this.article.categoryId.split(',').map((data) => { return +data })
+                            }
                         }
                     })
                 }
