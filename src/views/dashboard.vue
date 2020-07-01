@@ -31,7 +31,7 @@ export default {
     },
     computed: {
         role() {
-            return this.$store.getters.username === "admin"
+            return this.$store.getters.name === "admin"
                 ? "超级管理员"
                 : "普通用户";
         },
