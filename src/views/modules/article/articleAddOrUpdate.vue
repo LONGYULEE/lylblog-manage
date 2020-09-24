@@ -84,6 +84,7 @@ import 'mavon-editor/dist/css/index.css'
 import { treeDataTranslate } from '@/utils/util'
 import { getUpToken, deleteFile } from "@/api/article";
 export default {
+    name: "article-articleAddOrUpdate",
     components: {
         'mavon-editor': MavonEditor.mavonEditor
     },
@@ -93,7 +94,8 @@ export default {
                 recommend: false,
                 tagList: [],
                 type: 0,
-                coverType: 2 // 默认无图片
+                coverType: 2, // 默认无图片
+                author: '寒露'
             },
             coverTypeList: this.getSysParamArr('ARTICLE_COVER_TYPE'),
             url: '',
