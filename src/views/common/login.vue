@@ -77,6 +77,8 @@ export default {
                                 setToken(data.data);
                                 this.$router.replace({ path: "/home" });
                             } else {
+                                this.getCaptcha();
+                                this.param.captcha = '';
                                 this.$myNotify.error(data.message);
                             }
                         });
