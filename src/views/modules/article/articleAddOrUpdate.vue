@@ -242,6 +242,10 @@ export default {
         cancel() { this.dialogVisible = false; },
         // 保存文章
         saveArticle() {
+            if (this.tagListSelect.length > 5) {
+                this.$message.error('标签不能超过5个');
+                return false;
+            }
             this.$refs['articleForm'].validate((valid) => {
                 if (valid) {
                     // 转化categoryId
