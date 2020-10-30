@@ -295,7 +295,8 @@ export default {
             };
         },
         mavonChangeHandle(context, render) {
-            this.article.contentFormat = render
+            // marked(context);
+            this.article.contentFormat = render;
         }
     }
 }
