@@ -30,7 +30,7 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-document  grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">1234</div>
+                                    <div class="grid-num">{{nums.articles}}</div>
                                     <div>文章</div>
                                 </div>
                             </div>
@@ -41,7 +41,7 @@
                             <div class="grid-content grid-con-2">
                                 <i class="el-icon-s-grid grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">321</div>
+                                    <div class="grid-num">{{nums.categories}}</div>
                                     <div>分类</div>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                             <div class="grid-content grid-con-3">
                                 <i class="el-icon-collection-tag grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">5000</div>
+                                    <div class="grid-num">{{nums.tags}}</div>
                                     <div>标签</div>
                                 </div>
                             </div>
@@ -83,6 +83,24 @@
                             </template>
                         </el-table-column>
                     </el-table>
+                </el-card>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-col :span="24">
+                <el-card shadow="hover" class="mgb20" style="height:252px;">
+                    <div class="years" v-for="(item,index) in years" :key="index">
+                        <el-badge :value="item.count" type="primary">
+                            <div class="years-num">
+                                <div>{{item.year}}</div>
+                            </div>
+                        </el-badge>
+                        <el-badge :value="item01.count" v-for="(item01,index01) in item.months" :key="index01">
+                            <div class="month-num">
+                                <div>{{item01.month}}</div>
+                            </div>
+                        </el-badge>
+                    </div>
                 </el-card>
             </el-col>
         </el-row>
@@ -121,43 +139,19 @@ export default {
                     status: true
                 }
             ],
-            data: [
-                {
-                    name: "2018/09/04",
-                    value: 1083
-                },
-                {
-                    name: "2018/09/05",
-                    value: 941
-                },
-                {
-                    name: "2018/09/06",
-                    value: 1139
-                },
-                {
-                    name: "2018/09/07",
-                    value: 816
-                },
-                {
-                    name: "2018/09/08",
-                    value: 327
-                },
-                {
-                    name: "2018/09/09",
-                    value: 228
-                },
-                {
-                    name: "2018/09/10",
-                    value: 1065
-                }
-            ],
+            nums: {
+                articles: 0,
+                categories: 0,
+                tags: 0
+            },
+            years: []
         };
     },
     components: {
     },
     computed: {
         role() {
-            return this.$store.getters.username === "admin"
+            return this.$store.getters.name === "admin"
                 ? "超级管理员"
                 : "普通用户";
         },
@@ -166,16 +160,9 @@ export default {
         }
     },
     created() {
-        // this.handleListener();
-        // this.changeDate();
+        this.getNums();
+        this.getYears();
     },
-    // activated() {
-    //     this.handleListener();
-    // },
-    // deactivated() {
-    //     window.removeEventListener("resize", this.renderChart);
-    //     bus.$off("collapse", this.handleBus);
-    // },
     methods: {
         changeDate() {
             const now = new Date().getTime();
@@ -184,22 +171,31 @@ export default {
                 item.name = `${date.getFullYear()}/${date.getMonth() +
                     1}/${date.getDate()}`;
             });
+        },
+        getNums() {
+            this.$http
+                .get("/admin/operation/category/getNums", this.param)
+                .then(res => {
+                    let { data } = res;
+                    if (data.code === 2000) {
+                        this.nums = {
+                            articles: data.data.articleNum,
+                            categories: data.data.categoryNum,
+                            tags: data.data.tagNum
+                        }
+                    }
+                });
+        },
+        getYears() {
+            this.$http
+                .get("/timeline", this.param)
+                .then(res => {
+                    let { data } = res;
+                    if (data.code === 2000) {
+                        this.years = data.data;
+                    }
+                });
         }
-
-        // handleListener() {
-        //     bus.$on('collapse', this.handleBus);
-        //     // 调用renderChart方法对图表进行重新渲染
-        //     window.addEventListener('resize', this.renderChart);
-        // },
-        // handleBus(msg) {
-        //     setTimeout(() => {
-        //         this.renderChart();
-        //     }, 200);
-        // },
-        // renderChart() {
-        //     this.$refs.bar.renderChart();
-        //     this.$refs.line.renderChart();
-        // }
     }
 };
 </script>
@@ -242,7 +238,7 @@ export default {
     background: rgb(100, 213, 114)
 
 .grid-con-2 .grid-num
-    color: rgb(45, 140, 240)
+    color: #64d572
 
 .grid-con-3 .grid-con-icon
     background: rgb(242, 94, 67)
@@ -266,7 +262,6 @@ export default {
 
 .user-info-cont
     padding-left: 50px
-    flex: 1
     font-size: 14px
     color: #999
 
@@ -291,4 +286,39 @@ export default {
     &-del
         text-decoration: line-through
         color: #999
+
+.years
+    width: 100%
+    height: 75px
+    margin-bottom: 20px
+    .years-num
+        height: 75px
+        width: 75px
+        border-radius: 5px
+        background: darkseagreen
+        color: #fff
+        display: inline-block
+        margin-right: 25px
+        position: relative
+        div
+            position: absolute
+            top: 50%
+            left: 50%
+            transform: translate(-50%, -50%)
+            font-size: 21px
+    .month-num
+        height: 75px
+        width: 75px
+        border-radius: 5px
+        background: cadetblue
+        color: #fff
+        display: inline-block
+        margin-right: 25px
+        position: relative
+        div
+            position: absolute
+            top: 50%
+            left: 50%
+            transform: translate(-50%, -50%)
+            font-size: 21px
 </style>
