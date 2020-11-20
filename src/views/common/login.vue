@@ -111,18 +111,14 @@ export default {
     position: absolute;
     width: 100%;
     height: 100%;
-    /* background-image: url(../../assets/img/login-bg.jpg); */
-    /* background-clip: #282c34; */
-    background-color: #324157;
-    background-size: 100%;
+    background-image: url('http://img.lylblog.xyz/AK-02.jpg');
 }
 .ms-title {
     width: 100%;
     line-height: 50px;
     text-align: center;
-    font-size: 20px;
+    font-size: 24px;
     color: #fff;
-    border-bottom: 1px solid #ddd;
 }
 .ms-login {
     position: absolute;
