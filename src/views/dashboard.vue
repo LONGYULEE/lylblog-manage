@@ -174,7 +174,7 @@ export default {
         },
         getNums() {
             this.$http
-                .get("/admin/operation/category/getNums", this.param)
+                .get("/operation/getCategoyNum", this.param)
                 .then(res => {
                     let { data } = res;
                     if (data.code === 2000) {
@@ -298,7 +298,6 @@ export default {
         background: darkseagreen
         color: #fff
         display: inline-block
-        margin-right: 25px
         position: relative
         div
             position: absolute
@@ -313,7 +312,7 @@ export default {
         background: cadetblue
         color: #fff
         display: inline-block
-        margin-right: 25px
+        margin-left: 25px
         position: relative
         div
             position: absolute
