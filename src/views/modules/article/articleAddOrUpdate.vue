@@ -256,12 +256,13 @@ export default {
                         data: this.$http.adornData(this.article)
                     }).then(({ data }) => {
                         if (data && data.code === 2000) {
+                            this.dialogVisible = false;
                             this.$message.success('保存博文成功')
                             // 关闭当前标签
                             this.$store
                                 .dispatch("tagsView/delView", this.$route)
                                 .then(e => {
-                                    console.log(e);
+                                    // console.log(e);
                                 });
                             // 跳转到 articleList
                             this.$router.push("/article-article");
